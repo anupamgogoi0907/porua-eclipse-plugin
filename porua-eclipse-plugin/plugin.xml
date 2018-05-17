@@ -69,5 +69,13 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+         <page id="Porua Preference Category"
+               name="Porua"
+               class="porua.plugin.preferences.PoruaPreferencePage">
+         </page>
+   </extension>
 
 </plugin>

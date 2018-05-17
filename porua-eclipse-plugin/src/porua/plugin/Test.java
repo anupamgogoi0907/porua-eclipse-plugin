@@ -3,69 +3,52 @@ package porua.plugin;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetAdapter;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.eclipse.swt.widgets.Text;
 
 import porua.plugin.components.AddConfigurationDialog;
 import porua.plugin.pojos.TagData;
-import porua.plugin.transfer.TagDataTransfer;
-import porua.plugin.utility.PluginUtility;
 
 public class Test {
+	public static Layout makeLayout() {
+		RowLayout hLayout = new RowLayout(SWT.HORIZONTAL);
+		hLayout.center = true;
+		hLayout.spacing = 10;
+		return hLayout;
+	}
 
 	public static void display() {
 		Display display = new Display();
 
 		// Shell
 		Shell shell = new Shell(display);
-		shell.setLayout(new RowLayout());
 
-		Label lblSource = new Label(shell, SWT.NONE);
-		lblSource.setText("Drag Me");
-		lblSource.pack();
-		// Drag Source.
-		DragSource ds = new DragSource(lblSource, DND.DROP_MOVE);
-		ds.setTransfer(new Transfer[] { TagDataTransfer.getInstance() });
-		ds.addDragListener(new DragSourceAdapter() {
-			@Override
-			public void dragSetData(DragSourceEvent event) {
-				event.data = new TagData();
-				System.out.println();
+		// Component
+		Group group = new Group(shell, SWT.NONE);
+		group.setLayout(makeLayout());
 
-			}
-		});
+		Label label = new Label(group, SWT.NONE);
+		label.setText("Palettes Path:");
 
-		// Drop target
-		DropTarget dtGroup = new DropTarget(shell, DND.DROP_MOVE);
-		dtGroup.setTransfer(new Transfer[] { TagDataTransfer.getInstance() });
-		dtGroup.addDropListener(new DropTargetAdapter() {
-			@Override
-			public void drop(DropTargetEvent event) {
-				Object obj = event.data;
-				System.out.println(obj);
-			}
-		});
-
+		Text txt = new Text(group, SWT.NONE);
+		RowData rd=new RowData();
+		rd.width=200;
+		txt.setLayoutData(rd);
+		
+		
+		group.pack();
+		// Open
 		shell.open();
 
 		while (!shell.isDisposed()) {
@@ -102,8 +85,8 @@ public class Test {
 	}
 
 	public static void main(String[] args) throws Exception {
-		
-		PluginUtility.loadTags();
+
+		display();
 	}
 
 }
