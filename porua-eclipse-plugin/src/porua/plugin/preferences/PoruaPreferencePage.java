@@ -15,12 +15,17 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
 import porua.plugin.Activator;
 import porua.plugin.utility.PluginUtility;
+import porua.plugin.views.PoruaPaletteView;
 
 public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -71,11 +76,12 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 		try {
 			if (isChanged && libPath != null && !libPath.equals("")) {
 				pref.put("LIB_PATH", libPath);
-				PluginUtility.LIB_PATH = libPath;
-				PluginUtility.loadTags();
+				PluginUtility.loadTags(libPath);
+				reopenPalleteView();
 			}
 		} catch (Exception e) {
 			PluginUtility.clearMaps();
+			reopenPalleteView();
 			MessageDialog.openError(getShell(), "Error", e.getMessage());
 		} finally {
 			try {
@@ -85,6 +91,25 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 		return super.performOk();
+	}
+
+	private void reopenPalleteView() {
+		hideView();
+		showView();
+	}
+
+	private void showView() {
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PoruaPaletteView.ID);
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void hideView() {
+		IWorkbenchPage wp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewPart myView = wp.findView(PoruaPaletteView.ID);
+		wp.hideView(myView);
 	}
 
 	private Layout makeLayout() {

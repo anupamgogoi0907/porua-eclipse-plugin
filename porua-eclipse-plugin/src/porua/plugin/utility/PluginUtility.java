@@ -139,7 +139,10 @@ public class PluginUtility {
 		}
 		return loader;
 	}
-
+	public static void loadTags(String libPath)throws Exception{
+		PluginUtility.LIB_PATH=libPath;
+		loadTags();
+	}
 	public static void loadTags() throws Exception {
 		URLClassLoader loader = getClassLoader();
 		for (URL url : loader.getURLs()) {

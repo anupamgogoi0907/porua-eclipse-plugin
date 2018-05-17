@@ -44,8 +44,7 @@ public class Activator extends AbstractUIPlugin {
 						"Please set library path in Preferences->Porua");
 				;
 			} else {
-				PluginUtility.LIB_PATH = value;
-				PluginUtility.loadTags();
+				PluginUtility.loadTags(value);
 			}
 
 		} catch (Exception e) {
