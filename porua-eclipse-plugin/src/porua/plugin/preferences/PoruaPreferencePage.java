@@ -75,6 +75,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 				PluginUtility.loadTags();
 			}
 		} catch (Exception e) {
+			PluginUtility.clearMaps();
 			MessageDialog.openError(getShell(), "Error", e.getMessage());
 		} finally {
 			try {

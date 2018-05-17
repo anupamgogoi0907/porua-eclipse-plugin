@@ -40,6 +40,8 @@ import porua.plugin.pojos.TagData;
 public class PluginUtility {
 	private static int nsCount = 0;
 	public static String LIB_PATH = "";
+	public static Map<String, List<TagData>> mapNsTags = new HashMap<>();
+	public static Map<String, List<TagData>> mapPrefixTags = new HashMap<>();
 
 	public static ImageData getImageByTag(String tagComponent) {
 		ImageData imgData = null;
@@ -194,10 +196,10 @@ public class PluginUtility {
 	}
 
 	public static void mapNamespaceToTag(TagData tagData) {
-		List<TagData> listTag = PluginConstants.mapNsTags.get(tagData.getTagNamespace());
+		List<TagData> listTag = mapNsTags.get(tagData.getTagNamespace());
 		listTag = (listTag == null) ? new ArrayList<>() : listTag;
 		listTag.add(tagData);
-		PluginConstants.mapNsTags.put(tagData.getTagNamespace(), listTag);
+		mapNsTags.put(tagData.getTagNamespace(), listTag);
 
 		if (tagData.getConfig() != null && tagData.getConfig().size() != 0) {
 			mapNamespaceToTag((TagData) tagData.getConfig().values().toArray()[0]);
@@ -205,26 +207,26 @@ public class PluginUtility {
 	}
 
 	public static void generatePrefixForTag() {
-		for (String ns : PluginConstants.mapNsTags.keySet()) {
+		for (String ns : mapNsTags.keySet()) {
 			String prefix = "ns" + (++nsCount);
-			List<TagData> list = PluginConstants.mapNsTags.get(ns);
+			List<TagData> list = mapNsTags.get(ns);
 			list.stream().forEach(t -> t.setTagNamespacePrefix(prefix));
 
-			PluginConstants.mapPrefixTags.put(prefix, list);
+			mapPrefixTags.put(prefix, list);
 		}
 	}
 
 	public static TagData getTagDataByTagName(String tagComponent) {
 		String[] arr = tagComponent.split(":"); // prefix:component
-		List<TagData> listTag = PluginConstants.mapPrefixTags.get(arr[0]);
+		List<TagData> listTag = mapPrefixTags.get(arr[0]);
 		TagData tagData = listTag.stream().filter(t -> t.getTag().equals(arr[1])).findFirst().get();
 		return tagData;
 	}
 
 	public static List<TagData> getAllTags() {
 		List<TagData> listAllTags = new ArrayList<>();
-		for (String ns : PluginConstants.mapNsTags.keySet()) {
-			List<TagData> listTag = PluginConstants.mapNsTags.get(ns);
+		for (String ns : mapNsTags.keySet()) {
+			List<TagData> listTag = mapNsTags.get(ns);
 			listAllTags.addAll(listTag);
 		}
 		return listAllTags;
@@ -284,5 +286,10 @@ public class PluginUtility {
 		} else {
 			return null;
 		}
+	}
+
+	public static void clearMaps() {
+		mapNsTags = new HashMap<>();
+		mapPrefixTags = new HashMap<>();
 	}
 }

@@ -40,15 +40,17 @@ public class Activator extends AbstractUIPlugin {
 			IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 			String value = pref.get("LIB_PATH", null);
 			if (value == null) {
-
+				MessageDialog.openInformation(getWorkbench().getActiveWorkbenchWindow().getShell(), "Message",
+						"Please set library path in Preferences->Porua");
+				;
 			} else {
 				PluginUtility.LIB_PATH = value;
 				PluginUtility.loadTags();
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			MessageDialog.openError(getDefault().getWorkbench().getDisplay().getActiveShell(), "Error", e.getMessage());
+			PluginUtility.clearMaps();
+			MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", e.getMessage());
 		}
 
 	}
