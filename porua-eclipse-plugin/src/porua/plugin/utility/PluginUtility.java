@@ -39,6 +39,7 @@ import porua.plugin.pojos.TagData;
 @SuppressWarnings({ "deprecation" })
 public class PluginUtility {
 	private static int nsCount = 0;
+	public static String LIB_PATH = "";
 
 	public static ImageData getImageByTag(String tagComponent) {
 		ImageData imgData = null;
@@ -100,7 +101,7 @@ public class PluginUtility {
 		try {
 			Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
 			URL fileURL = bundle.getEntry(filePath);
-			fileURL=FileLocator.toFileURL(fileURL);
+			fileURL = FileLocator.toFileURL(fileURL);
 			file = URIUtil.toFile(URIUtil.toURI(fileURL));
 			System.out.println(file.getAbsolutePath());
 		} catch (Exception e) {
@@ -120,10 +121,10 @@ public class PluginUtility {
 		return props;
 	}
 
-	public static URLClassLoader getClassLoader() {
+	public static URLClassLoader getClassLoader() throws Exception {
 		URLClassLoader loader = null;
 		try {
-			File[] jars = new File(PluginConstants.LIB_PATH).listFiles();
+			File[] jars = new File(PluginUtility.LIB_PATH).listFiles();
 			List<URL> urls = new ArrayList<>();
 			for (File jar : jars) {
 				if (jar.getName().endsWith(".jar")) {
@@ -132,7 +133,7 @@ public class PluginUtility {
 			}
 			loader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]));
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception("Invalid library path");
 		}
 		return loader;
 	}
