@@ -21,7 +21,7 @@
             id="porua-eclipse-plugin">
       </category>
       <wizard
-            name="New Configuration File"
+            name="Configuration File"
             icon="resources/icons/ant_16.png"
             category="porua-eclipse-plugin"
             class="porua.plugin.wizards.PoruaNewXMLWizard"

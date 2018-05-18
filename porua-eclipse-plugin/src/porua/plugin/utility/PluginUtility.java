@@ -33,7 +33,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 
-import porua.plugin.Activator;
+import porua.plugin.PoruaEclipsePlugin;
 import porua.plugin.pojos.TagData;
 
 @SuppressWarnings({ "deprecation" })
@@ -50,7 +50,7 @@ public class PluginUtility {
 			imgData = new ImageData(PluginUtility.getClassLoader().getResourceAsStream(pojo.getImageName()));
 			imgData.scaledTo(100, 50);
 		} catch (Exception e) {
-			imgData = Activator.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
+			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
 		}
 		return imgData;
 	}
@@ -61,7 +61,7 @@ public class PluginUtility {
 			imgData = new ImageData(PluginUtility.getClassLoader().getResourceAsStream(tagData.getImageName()));
 			imgData.scaledTo(100, 50);
 		} catch (Exception e) {
-			imgData = Activator.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
+			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
 		}
 		return imgData;
 	}
@@ -101,7 +101,7 @@ public class PluginUtility {
 	public static File readBundleResource(String filePath) {
 		File file = null;
 		try {
-			Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
+			Bundle bundle = Platform.getBundle(PoruaEclipsePlugin.PLUGIN_ID);
 			URL fileURL = bundle.getEntry(filePath);
 			fileURL = FileLocator.toFileURL(fileURL);
 			file = URIUtil.toFile(URIUtil.toURI(fileURL));

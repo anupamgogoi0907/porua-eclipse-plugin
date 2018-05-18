@@ -23,7 +23,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
-import porua.plugin.Activator;
+import porua.plugin.PoruaEclipsePlugin;
 import porua.plugin.utility.PluginUtility;
 import porua.plugin.views.PoruaPaletteView;
 
@@ -35,7 +35,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public void init(IWorkbench workbench) {
-		pref = ConfigurationScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
 	}
 
 	@Override

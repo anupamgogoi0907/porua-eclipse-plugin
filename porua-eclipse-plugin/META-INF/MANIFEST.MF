@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Porua-eclipse-plugin
-Bundle-SymbolicName: porua-eclipse-plugin;singleton:=true
+Bundle-Name: porua-eclipse-plugin
+Bundle-SymbolicName: porua.plugin.PoruaEclipsePlugin;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: porua.plugin.Activator
+Bundle-Activator: porua.plugin.PoruaEclipsePlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: porua-eclipse-plugin
+Bundle-Vendor: Anupam Gogoi
