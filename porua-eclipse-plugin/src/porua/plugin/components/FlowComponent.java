@@ -8,7 +8,11 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.TagData;
@@ -30,6 +34,7 @@ public class FlowComponent extends Group {
 	private void initComponent() {
 		makeLayout();
 		makeDropTarget();
+		makeContextMenu();
 		pack();
 	}
 
@@ -42,7 +47,8 @@ public class FlowComponent extends Group {
 				TagData tagData = (TagData) event.data;
 				if (!PluginConstants.TAG_FLOW.equals(tagData.getTag())) {
 					poruaXmlEditor.modifyNamespaces(tagData);
-					poruaXmlEditor.makeChangesToXml(getText(), tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
+					poruaXmlEditor.makeChangesToXml(getText(),
+							tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
 					parent.pack();
 				}
 			}
@@ -57,6 +63,26 @@ public class FlowComponent extends Group {
 
 		setLayout(hLayout);
 	}
+
+	public void makeContextMenu() {
+		Menu popupMenu = new Menu(this);
+
+		MenuItem runItem = new MenuItem(popupMenu, SWT.CASCADE);
+		runItem.setText("Run");
+		runItem.setData(this.getData());
+		runItem.addListener(SWT.Selection, menuItemListener);
+
+		this.setMenu(popupMenu);
+	}
+
+	private Listener menuItemListener = new Listener() {
+
+		@Override
+		public void handleEvent(Event event) {
+			System.out.println("Running...");
+
+		}
+	};
 
 	@Override
 	protected void checkSubclass() {
