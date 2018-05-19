@@ -33,6 +33,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginUtility;
 
 /**
@@ -61,7 +62,6 @@ public class PoruaNewXMLWizard extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-	private String APP_FOLDER = "/src/main/app";
 
 	@Override
 	public void addPages() {
@@ -71,15 +71,15 @@ public class PoruaNewXMLWizard extends Wizard implements INewWizard {
 				IFolder folder = null;
 				if (obj instanceof Project) {
 					Project project = (Project) obj;
-					folder = project.getFolder(APP_FOLDER);
+					folder = project.getFolder(PluginConstants.APP_FOLDER);
 				} else if (obj instanceof JavaProject) {
 					JavaProject javaProject = (JavaProject) obj;
-					folder = javaProject.getProject().getFolder(APP_FOLDER);
+					folder = javaProject.getProject().getFolder(PluginConstants.APP_FOLDER);
 
 				} else if (obj instanceof Folder) {
 					Folder f = (Folder) obj;
 					folder = f.getProject().getFolder(f.getProjectRelativePath());
-					if (!folder.getFullPath().toString().contains(APP_FOLDER)) {
+					if (!folder.getFullPath().toString().contains(PluginConstants.APP_FOLDER)) {
 						folder = null;
 					}
 				}
@@ -89,7 +89,7 @@ public class PoruaNewXMLWizard extends Wizard implements INewWizard {
 					page = new PoruaNewXMLWizardPage();
 					addPage(page);
 				} else {
-					// TODO
+					MessageDialog.openInformation(getShell(), "Message", "Please select the root of the project.");
 				}
 
 			}

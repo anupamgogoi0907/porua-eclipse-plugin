@@ -12,11 +12,18 @@ import org.osgi.framework.Bundle;
 
 import porua.plugin.PoruaEclipsePlugin;
 
+@SuppressWarnings("restriction")
 public class PluginUtility {
+	public static String projectName = "";
 
 	public static void configurePlugin(String poruaHome) throws Exception {
 		PluginClassLoader.configureClassLoaders(poruaHome);
 		PluginTagUtility.loadTags();
+	}
+
+	public static void setProject(Object obj) throws Exception {
+		org.eclipse.core.internal.resources.File file = (org.eclipse.core.internal.resources.File) obj;
+		projectName = file.getProject().getName();
 	}
 
 	public static File readBundleResource(String filePath) {

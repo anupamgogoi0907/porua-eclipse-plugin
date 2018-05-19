@@ -1,5 +1,6 @@
 package porua.plugin;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -85,7 +86,10 @@ public class Test {
 	}
 
 	public static void main(String[] args) throws Exception {
-
+		File file=new File("/Users/ac-agogoi/Desktop/Anupam_Gogoi_Curriculum_English_2018.pdf");
+		String str=file.getAbsolutePath();
+		String[] arr=str.split("/");
+		System.out.println(arr[1]);
 	}
 
 }

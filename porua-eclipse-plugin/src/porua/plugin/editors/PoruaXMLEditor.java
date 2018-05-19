@@ -7,6 +7,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -36,6 +38,7 @@ import porua.plugin.components.FlowComponent;
 import porua.plugin.components.PaletteComponent;
 import porua.plugin.pojos.TagData;
 import porua.plugin.utility.PluginDomUtility;
+import porua.plugin.utility.PluginUtility;
 import porua.plugin.utility.PluginConstants;
 import porua.plugin.views.PalettePropertyView;
 
@@ -54,6 +57,17 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	public PoruaXMLEditor() {
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		setCurrentProject();
+	}
+
+	public void setCurrentProject() {
+		try {
+			ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
+			PluginUtility.setProject(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -208,8 +222,10 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 			}
 		}
 		if (!nsFound) {
-			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(), tagData.getTagNamespace());
-			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").getTextContent();
+			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(),
+					tagData.getTagNamespace());
+			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation")
+					.getTextContent();
 			schemaLoc = schemaLoc + " " + tagData.getTagNamespace() + " " + tagData.getTagSchemaLocation();
 			xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").setTextContent(schemaLoc);
 		}
@@ -284,11 +300,11 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	 */
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
-		if(newPageIndex==0) {
-			IViewPart part=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PalettePropertyView.ID);
+		if (newPageIndex == 0) {
+			IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.findView(PalettePropertyView.ID);
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(part);
-		}
-		else if (newPageIndex == 1) {
+		} else if (newPageIndex == 1) {
 			redrawComposite(readEditorData());
 		}
 	}
@@ -302,7 +318,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 				public void run() {
 					IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 					for (int i = 0; i < pages.length; i++) {
-						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject().equals(event.getResource())) {
+						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
+								.equals(event.getResource())) {
 							IEditorPart editorPart = pages[i].findEditor(editor.getEditorInput());
 							pages[i].closeEditor(editorPart, true);
 						}
