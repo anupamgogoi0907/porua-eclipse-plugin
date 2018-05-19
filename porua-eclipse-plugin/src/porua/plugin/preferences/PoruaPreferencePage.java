@@ -49,7 +49,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 		group.setLayout(makeLayout());
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText("Palettes Path:");
+		label.setText("Porua Home:");
 
 		Text txt = new Text(group, SWT.NONE);
 		txt.setText(poruaHome == null ? "" : poruaHome);
