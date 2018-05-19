@@ -7,6 +7,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginUtility;
 
 /**
@@ -38,17 +39,17 @@ public class PoruaEclipsePlugin extends AbstractUIPlugin {
 
 		try {
 			IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
-			String value = pref.get("LIB_PATH", null);
+			String value = pref.get(PluginConstants.KEY_PORUA_HOME, null);
 			if (value == null) {
 				MessageDialog.openInformation(getWorkbench().getActiveWorkbenchWindow().getShell(), "Message",
 						"Please set library path in Preferences->Porua");
 				;
 			} else {
-				PluginUtility.loadTags(value);
+				PluginUtility.configurePlugin(value);
 			}
 
 		} catch (Exception e) {
-			PluginUtility.clearMaps();
+			// PluginTagUtility.clearMaps();
 			MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", e.getMessage());
 		}
 

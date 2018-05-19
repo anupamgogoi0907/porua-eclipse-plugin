@@ -42,11 +42,10 @@ public class Test {
 		label.setText("Palettes Path:");
 
 		Text txt = new Text(group, SWT.NONE);
-		RowData rd=new RowData();
-		rd.width=200;
+		RowData rd = new RowData();
+		rd.width = 200;
 		txt.setLayoutData(rd);
-		
-		
+
 		group.pack();
 		// Open
 		shell.open();
@@ -66,7 +65,8 @@ public class Test {
 	}
 
 	public static void makeImage(Shell shell) {
-		ImageData imgData = new ImageData("/Users/ac-agogoi/git/ant-esb/porua-eclipse-plugin/resources/icons/ant_16.png");
+		ImageData imgData = new ImageData(
+				"/Users/ac-agogoi/git/ant-esb/porua-eclipse-plugin/resources/icons/ant_16.png");
 		Image im = new Image(shell.getDisplay(), imgData);
 		Label label = new Label(shell, SWT.NONE);
 		label.setSize(100, 100);
@@ -86,7 +86,6 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		display();
 	}
 
 }

@@ -24,13 +24,15 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
 import porua.plugin.PoruaEclipsePlugin;
+import porua.plugin.utility.PluginConstants;
+import porua.plugin.utility.PluginTagUtility;
 import porua.plugin.utility.PluginUtility;
 import porua.plugin.views.PoruaPaletteView;
 
 public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private IEclipsePreferences pref;
-	private String libPath;
+	private String poruaHome;
 	private boolean isChanged;
 
 	@Override
@@ -41,7 +43,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	protected Control createContents(Composite parent) {
 
-		libPath = pref.get("LIB_PATH", null);
+		poruaHome = pref.get(PluginConstants.KEY_PORUA_HOME, null);
 
 		Group group = new Group(parent, SWT.NONE);
 		group.setLayout(makeLayout());
@@ -50,7 +52,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 		label.setText("Palettes Path:");
 
 		Text txt = new Text(group, SWT.NONE);
-		txt.setText(libPath == null ? "" : libPath);
+		txt.setText(poruaHome == null ? "" : poruaHome);
 		RowData rd = new RowData();
 		rd.width = 300;
 		txt.setLayoutData(rd);
@@ -59,8 +61,8 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 			@Override
 			public void modifyText(ModifyEvent event) {
 				Text txt = (Text) event.widget;
-				if (!txt.getText().equals(libPath)) {
-					libPath = txt.getText();
+				if (!txt.getText().equals(poruaHome)) {
+					poruaHome = txt.getText();
 					isChanged = true;
 				}
 			}
@@ -74,13 +76,13 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	public boolean performOk() {
 		try {
-			if (isChanged && libPath != null && !libPath.equals("")) {
-				pref.put("LIB_PATH", libPath);
-				PluginUtility.loadTags(libPath);
+			if (isChanged && poruaHome != null && !poruaHome.equals("")) {
+				pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
+				PluginUtility.configurePlugin(poruaHome);
 				reopenPalleteView();
 			}
 		} catch (Exception e) {
-			PluginUtility.clearMaps();
+			PluginTagUtility.clearMaps();
 			reopenPalleteView();
 			MessageDialog.openError(getShell(), "Error", e.getMessage());
 		} finally {

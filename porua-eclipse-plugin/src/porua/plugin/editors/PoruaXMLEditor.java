@@ -35,8 +35,8 @@ import porua.plugin.components.FlowCanvas;
 import porua.plugin.components.FlowComponent;
 import porua.plugin.components.PaletteComponent;
 import porua.plugin.pojos.TagData;
+import porua.plugin.utility.PluginDomUtility;
 import porua.plugin.utility.PluginConstants;
-import porua.plugin.utility.PluginUtility;
 import porua.plugin.views.PalettePropertyView;
 
 public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
@@ -90,7 +90,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 
 	public void xmlToVisualComponent(String editorData) {
 		if (editorData != null && !editorData.equals("")) {
-			xmlDoc = PluginUtility.xmlToDom(editorData);
+			xmlDoc = PluginDomUtility.xmlToDom(editorData);
 			NodeList listFlow = xmlDoc.getElementsByTagName(findFlowTag());
 			for (int i = 0; i < listFlow.getLength(); i++) {
 				// Flow
@@ -167,7 +167,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	}
 
 	public void redrawComposite() {
-		redrawComposite(PluginUtility.domToXml(xmlDoc));
+		redrawComposite(PluginDomUtility.domToXml(xmlDoc));
 	}
 
 	public void redrawComposite(String xml) {

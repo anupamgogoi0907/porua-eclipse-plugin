@@ -27,7 +27,7 @@ import porua.plugin.components.AddConfigurationDialog;
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
 import porua.plugin.pojos.TagData;
-import porua.plugin.utility.PluginUtility;
+import porua.plugin.utility.PluginTagUtility;
 
 public class PalettePropertyView extends ViewPart implements IViewData {
 	public static final String ID = "porua.plugin.views.PalettePropertyView";
@@ -67,7 +67,7 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 	private void getTagData() {
 		Node nodeFlow = poruaXmlEditor.findFlowNodeInDom(compData.getGroupName());
 		Node nodeComp = nodeFlow.getChildNodes().item(compData.getIndex());
-		TagData tagData = PluginUtility.getTagDataByTagName(nodeComp.getNodeName());
+		TagData tagData = PluginTagUtility.getTagDataByTagName(nodeComp.getNodeName());
 		if (tagData != null) {
 			drawTagAttributes(nodeComp, tagData);
 		}

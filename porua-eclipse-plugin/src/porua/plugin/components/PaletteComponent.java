@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
 
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
-import porua.plugin.utility.PluginUtility;
+import porua.plugin.utility.PluginTagUtility;
 import porua.plugin.views.IViewData;
 import porua.plugin.views.PalettePropertyView;
 
@@ -39,7 +39,7 @@ public class PaletteComponent extends Button {
 	}
 
 	private void initComponent() {
-		setImage(new Image(parent.getDisplay(), PluginUtility.getImageByTag(tagComponent)));
+		setImage(new Image(parent.getDisplay(), PluginTagUtility.getImageByTag(tagComponent)));
 		setSize(100, 100);
 		setData(new ComponentData(parent.getText(), index));
 		makeContextMenu();

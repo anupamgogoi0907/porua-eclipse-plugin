@@ -36,7 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import porua.plugin.pojos.TagData;
 import porua.plugin.transfer.TagDataTransfer;
-import porua.plugin.utility.PluginUtility;
+import porua.plugin.utility.PluginTagUtility;
 
 public class PoruaPaletteView extends ViewPart {
 
@@ -66,7 +66,7 @@ public class PoruaPaletteView extends ViewPart {
 
 		@Override
 		public Image getImage(Object obj) {
-			Image image = new Image(viewer.getTable().getDisplay(), PluginUtility.getImageByTag((TagData) obj));
+			Image image = new Image(viewer.getTable().getDisplay(), PluginTagUtility.getImageByTag((TagData) obj));
 			return image;
 		}
 	}
@@ -75,7 +75,7 @@ public class PoruaPaletteView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.V_SCROLL);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(PluginUtility.getAllTags());
+		viewer.setInput(PluginTagUtility.getAllTags());
 
 		viewer.setLabelProvider(new ViewLabelProvider());
 
@@ -146,7 +146,8 @@ public class PoruaPaletteView extends ViewPart {
 		};
 		action1.setText("Action 1");
 		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		action1.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
 		action2 = new Action() {
 			public void run() {
