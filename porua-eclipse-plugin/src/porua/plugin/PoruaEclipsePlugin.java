@@ -39,13 +39,13 @@ public class PoruaEclipsePlugin extends AbstractUIPlugin {
 
 		try {
 			IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
-			String value = pref.get(PluginConstants.KEY_PORUA_HOME, null);
-			if (value == null) {
+			if ((pref.get(PluginConstants.KEY_PORUA_HOME, null) == null)
+					|| (pref.get(PluginConstants.KEY_MAVEN_HOME, null) == null)) {
 				MessageDialog.openInformation(getWorkbench().getActiveWorkbenchWindow().getShell(), "Message",
-						"Please set library path in Preferences->Porua");
+						"Please configure the plugin in Preferences->Porua");
 				;
 			} else {
-				PluginUtility.configurePlugin(value);
+				PluginUtility.configurePlugin();
 			}
 
 		} catch (Exception e) {

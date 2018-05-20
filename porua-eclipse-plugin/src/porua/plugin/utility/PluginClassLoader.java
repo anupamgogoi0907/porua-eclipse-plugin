@@ -6,10 +6,13 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+
+import porua.plugin.PoruaEclipsePlugin;
+
 public class PluginClassLoader {
 
-	public static String PORUA_HOME = "";
-	public static String LIB_PATH = "";
 	private static URLClassLoader poruaClassLoader = null;
 	private static URLClassLoader paletteClassLoader = null;
 
@@ -21,8 +24,11 @@ public class PluginClassLoader {
 	public static ClassLoader getPoruaClassloader() throws Exception {
 		try {
 			if (poruaClassLoader == null) {
-				List<URL> rootUrls = getJarUrls(PORUA_HOME);
-				List<URL> libUrls = getJarUrls(PORUA_HOME.concat("/lib"));
+				IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
+				String poruaHome = pref.get(PluginConstants.KEY_PORUA_HOME, null);
+
+				List<URL> rootUrls = getJarUrls(poruaHome);
+				List<URL> libUrls = getJarUrls(poruaHome.concat("/lib"));
 				rootUrls.addAll(libUrls);
 				poruaClassLoader = URLClassLoader.newInstance(rootUrls.toArray(new URL[rootUrls.size()]));
 			}
@@ -32,10 +38,9 @@ public class PluginClassLoader {
 		return poruaClassLoader;
 	}
 
-	public static void configureClassLoaders(String poruaHome) throws Exception {
+	public static void configureClassLoaders() throws Exception {
 		poruaClassLoader = null;
 		paletteClassLoader = null;
-		PORUA_HOME = poruaHome;
 		getPoruaClassloader();
 		getPaletteClassLoader();
 	}
@@ -49,8 +54,11 @@ public class PluginClassLoader {
 	public static URLClassLoader getPaletteClassLoader() throws Exception {
 		try {
 			if (paletteClassLoader == null) {
-				LIB_PATH = PORUA_HOME.concat("/plugin");
-				List<URL> urls = getJarUrls(LIB_PATH);
+				IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
+				String poruaHome = pref.get(PluginConstants.KEY_PORUA_HOME, null);
+
+				String palleteJarPath = poruaHome.concat("/plugin");
+				List<URL> urls = getJarUrls(palleteJarPath);
 				paletteClassLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]));
 			}
 		} catch (Exception e) {

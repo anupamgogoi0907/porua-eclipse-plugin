@@ -9,8 +9,10 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -29,6 +31,18 @@ public class Test {
 		return hLayout;
 	}
 
+	public static Group makeGroups(Composite parent) {
+
+		Group g1 = new Group(parent, SWT.NONE);
+		g1.setLayout(makeLayout());
+
+		Label l1 = new Label(g1, SWT.NONE);
+		l1.setText("Porua Home");
+		Text t1 = new Text(g1, SWT.NONE);
+		g1.pack();
+		return g1;
+	}
+
 	public static void display() {
 		Display display = new Display();
 
@@ -36,18 +50,16 @@ public class Test {
 		Shell shell = new Shell(display);
 
 		// Component
-		Group group = new Group(shell, SWT.NONE);
-		group.setLayout(makeLayout());
+		Composite parent = new Composite(shell, SWT.NONE);
+		parent.setLayout(new RowLayout(SWT.VERTICAL));
+		
 
-		Label label = new Label(group, SWT.NONE);
-		label.setText("Palettes Path:");
-
-		Text txt = new Text(group, SWT.NONE);
-		RowData rd = new RowData();
-		rd.width = 200;
-		txt.setLayoutData(rd);
-
-		group.pack();
+		
+		makeGroups(parent);
+		makeGroups(parent);
+		
+		parent.pack();
+		
 		// Open
 		shell.open();
 
@@ -86,10 +98,7 @@ public class Test {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File file=new File("/Users/ac-agogoi/Desktop/Anupam_Gogoi_Curriculum_English_2018.pdf");
-		String str=file.getAbsolutePath();
-		String[] arr=str.split("/");
-		System.out.println(arr[1]);
+		display();
 	}
 
 }

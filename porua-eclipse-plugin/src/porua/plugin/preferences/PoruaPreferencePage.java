@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -33,6 +32,7 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private IEclipsePreferences pref;
 	private String poruaHome;
+	private String mavenHome;
 	private boolean isChanged;
 
 	@Override
@@ -41,46 +41,73 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(Composite composite) {
 
 		poruaHome = pref.get(PluginConstants.KEY_PORUA_HOME, null);
+		mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
 
+		// Make a new composite.
+		Composite parent = new Composite(composite, SWT.NONE);
+		parent.setLayout(new RowLayout(SWT.VERTICAL));
+		makeGroup("Porua Home:", "txtPoruaHome", (poruaHome == null ? "" : poruaHome), parent);
+		makeGroup("Maven Home:", "txtMavenHome", (mavenHome == null ? "" : mavenHome), parent);
+
+		parent.pack();
+		return parent;
+
+	}
+
+	private Group makeGroup(String lblName, String txtId, String txtValue, Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(makeLayout());
+		group.setLayout(new RowLayout(SWT.HORIZONTAL));
 
-		Label label = new Label(group, SWT.NONE);
-		label.setText("Porua Home:");
-
-		Text txt = new Text(group, SWT.NONE);
-		txt.setText(poruaHome == null ? "" : poruaHome);
+		// Text layout data.
 		RowData rd = new RowData();
 		rd.width = 300;
-		txt.setLayoutData(rd);
-		txt.addModifyListener(new ModifyListener() {
 
-			@Override
-			public void modifyText(ModifyEvent event) {
-				Text txt = (Text) event.widget;
-				if (!txt.getText().equals(poruaHome)) {
-					poruaHome = txt.getText();
-					isChanged = true;
-				}
-			}
-		});
+		// Porua Home
+		Label lbl = new Label(group, SWT.NONE);
+		lbl.setText(lblName);
+
+		Text txt = new Text(group, SWT.NONE);
+		txt.setData(txtId);
+		txt.setText(txtValue);
+		txt.setLayoutData(rd);
+		txt.addModifyListener(textModifyListener);
 
 		group.pack();
 		return group;
-
 	}
+
+	private ModifyListener textModifyListener = new ModifyListener() {
+
+		@Override
+		public void modifyText(ModifyEvent event) {
+			Text txt = (Text) event.widget;
+			String id = txt.getData().toString();
+			if (id.equals("txtPoruaHome")) {
+				if (!txt.getText().equals(poruaHome)) {
+					poruaHome = txt.getText();
+					isChanged = (poruaHome != null && !poruaHome.equals(""));
+				}
+
+			} else if (id.equals("txtMavenHome")) {
+				mavenHome = txt.getText();
+				isChanged = (mavenHome != null && !mavenHome.equals(""));
+			}
+		}
+	};
 
 	@Override
 	public boolean performOk() {
 		try {
-			if (isChanged && poruaHome != null && !poruaHome.equals("")) {
+			if (isChanged) {
 				pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
-				PluginUtility.configurePlugin(poruaHome);
+				pref.put(PluginConstants.KEY_MAVEN_HOME, mavenHome);
+				PluginUtility.configurePlugin();
 				reopenPalleteView();
 			}
+
 		} catch (Exception e) {
 			PluginTagUtility.clearMaps();
 			reopenPalleteView();
@@ -114,9 +141,4 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 		wp.hideView(myView);
 	}
 
-	private Layout makeLayout() {
-		RowLayout hLayout = new RowLayout(SWT.HORIZONTAL);
-		hLayout.spacing = 10;
-		return hLayout;
-	}
 }

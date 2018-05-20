@@ -63,8 +63,10 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	public void setCurrentProject() {
 		try {
 			ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			PluginUtility.setProject(obj);
+			if (selection != null) {
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				PluginUtility.setProject(obj);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

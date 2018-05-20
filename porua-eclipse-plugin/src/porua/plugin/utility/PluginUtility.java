@@ -2,28 +2,65 @@ package porua.plugin.utility;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.osgi.framework.Bundle;
 
 import porua.plugin.PoruaEclipsePlugin;
 
 @SuppressWarnings("restriction")
 public class PluginUtility {
-	public static String projectName = "";
 
-	public static void configurePlugin(String poruaHome) throws Exception {
-		PluginClassLoader.configureClassLoaders(poruaHome);
+	public static IProject project = null;
+
+	public static void configurePlugin() throws Exception {
+		PluginClassLoader.configureClassLoaders();
 		PluginTagUtility.loadTags();
 	}
 
 	public static void setProject(Object obj) throws Exception {
-		org.eclipse.core.internal.resources.File file = (org.eclipse.core.internal.resources.File) obj;
-		projectName = file.getProject().getName();
+		if (obj instanceof Project) {
+			Project p = (Project) obj;
+			project = p.getProject();
+		} else if (obj instanceof JavaProject) {
+			JavaProject jp = (JavaProject) obj;
+			project = jp.getProject();
+		} else if (obj instanceof org.eclipse.core.internal.resources.File) {
+			org.eclipse.core.internal.resources.File file = (org.eclipse.core.internal.resources.File) obj;
+			project = file.getProject();
+		}
+	}
+
+	public static void buildProject(String root) throws Exception {
+		IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
+		String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
+
+		ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", "install");
+		builder.directory(new File(root));
+		Process process = builder.start();
+		copy(process.getInputStream(), System.out);
+		process.waitFor();
+	}
+
+	static void copy(InputStream in, OutputStream out) throws IOException {
+		while (true) {
+			int c = in.read();
+			if (c == -1)
+				break;
+			out.write((char) c);
+		}
 	}
 
 	public static File readBundleResource(String filePath) {

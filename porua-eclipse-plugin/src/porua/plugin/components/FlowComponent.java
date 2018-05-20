@@ -85,7 +85,11 @@ public class FlowComponent extends Group {
 				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
 				Class<?> clazz = loader.loadClass("com.porua.container.PoruaContainer");
 				System.out.println(clazz.getName());
-				System.out.println(PluginUtility.projectName);
+				if (PluginUtility.project != null) {
+					String root = PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
+					root = root.concat(PluginUtility.project.getFullPath().toString());
+					PluginUtility.buildProject(root);
+				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
