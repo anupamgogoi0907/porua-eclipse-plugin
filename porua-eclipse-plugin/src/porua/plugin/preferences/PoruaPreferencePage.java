@@ -31,8 +31,8 @@ import porua.plugin.views.PoruaPaletteView;
 public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private IEclipsePreferences pref;
-	private String poruaHome;
-	private String mavenHome;
+	private String poruaHome = "";
+	private String mavenHome = "";
 	private boolean isChanged;
 
 	@Override
@@ -88,12 +88,12 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (id.equals("txtPoruaHome")) {
 				if (!txt.getText().equals(poruaHome)) {
 					poruaHome = txt.getText();
-					isChanged = (poruaHome != null && !poruaHome.equals(""));
+					isChanged = true;
 				}
 
 			} else if (id.equals("txtMavenHome")) {
 				mavenHome = txt.getText();
-				isChanged = (mavenHome != null && !mavenHome.equals(""));
+				isChanged = true;
 			}
 		}
 	};
@@ -101,11 +101,15 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	@Override
 	public boolean performOk() {
 		try {
-			if (isChanged) {
-				pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
-				pref.put(PluginConstants.KEY_MAVEN_HOME, mavenHome);
-				PluginUtility.configurePlugin();
-				reopenPalleteView();
+			if ((poruaHome != null && !poruaHome.equals("")) && (mavenHome != null && !mavenHome.equals(""))) {
+				if (isChanged) {
+					pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
+					pref.put(PluginConstants.KEY_MAVEN_HOME, mavenHome);
+					PluginUtility.configurePlugin();
+					reopenPalleteView();
+				}
+			} else {
+				MessageDialog.openInformation(getShell(), "Message", "Please set the required values.");
 			}
 
 		} catch (Exception e) {

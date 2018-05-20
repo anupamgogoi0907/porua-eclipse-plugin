@@ -67,7 +67,7 @@ public class PluginUtility {
 			if (!file.isDirectory() && file.getName().endsWith(".jar")) {
 				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
 				Class<?> clazz = loader.loadClass("com.porua.container.PoruaContainer");
-				Method mehtod = clazz.getDeclaredMethod("scanSingleApp");
+				Method mehtod = clazz.getDeclaredMethod("scanSingleApp",File.class);
 				mehtod.invoke(null, file);
 				break;
 			}
