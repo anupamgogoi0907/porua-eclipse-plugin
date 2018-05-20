@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Properties;
 
@@ -47,14 +48,34 @@ public class PluginUtility {
 		IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
 		String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
 
-		ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", "install");
-		builder.directory(new File(root));
-		Process process = builder.start();
-		copy(process.getInputStream(), System.out);
-		process.waitFor();
+		try {
+			ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", "install");
+			builder.directory(new File(root));
+			Process process = builder.start();
+			copy(process.getInputStream(), System.out);
+			process.waitFor();
+			executeApp(root);
+		} catch (Exception e) {
+			throw new Exception("Could not build the project.Maven error.");
+		}
+
 	}
 
-	static void copy(InputStream in, OutputStream out) throws IOException {
+	private static void executeApp(String root) throws Exception {
+		File[] files = new File(root).listFiles();
+		for (File file : files) {
+			if (!file.isDirectory() && file.getName().endsWith(".jar")) {
+				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
+				Class<?> clazz = loader.loadClass("com.porua.container.PoruaContainer");
+				Method mehtod = clazz.getDeclaredMethod("scanSingleApp");
+				mehtod.invoke(null, file);
+				break;
+			}
+		}
+
+	}
+
+	private static void copy(InputStream in, OutputStream out) throws IOException {
 		while (true) {
 			int c = in.read();
 			if (c == -1)

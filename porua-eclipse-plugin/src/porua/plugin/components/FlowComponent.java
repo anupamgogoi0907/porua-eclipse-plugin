@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.TagData;
 import porua.plugin.transfer.TagDataTransfer;
-import porua.plugin.utility.PluginClassLoader;
 import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginUtility;
 
@@ -82,9 +81,6 @@ public class FlowComponent extends Group {
 		@Override
 		public void handleEvent(Event event) {
 			try {
-				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
-				Class<?> clazz = loader.loadClass("com.porua.container.PoruaContainer");
-				System.out.println(clazz.getName());
 				if (PluginUtility.project != null) {
 					String root = PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
 					root = root.concat(PluginUtility.project.getFullPath().toString());

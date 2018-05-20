@@ -1,6 +1,5 @@
 package porua.plugin;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -9,8 +8,6 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -38,7 +35,7 @@ public class Test {
 
 		Label l1 = new Label(g1, SWT.NONE);
 		l1.setText("Porua Home");
-		Text t1 = new Text(g1, SWT.NONE);
+		new Text(g1, SWT.NONE);
 		g1.pack();
 		return g1;
 	}
@@ -52,14 +49,12 @@ public class Test {
 		// Component
 		Composite parent = new Composite(shell, SWT.NONE);
 		parent.setLayout(new RowLayout(SWT.VERTICAL));
-		
 
-		
 		makeGroups(parent);
 		makeGroups(parent);
-		
+
 		parent.pack();
-		
+
 		// Open
 		shell.open();
 
