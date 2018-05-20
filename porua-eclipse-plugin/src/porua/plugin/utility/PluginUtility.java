@@ -1,18 +1,23 @@
 package porua.plugin.utility;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -56,6 +61,7 @@ public class PluginUtility {
 			process.waitFor();
 			executeApp(root);
 		} catch (Exception e) {
+			PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
 			throw new Exception("Could not build the project.Maven error.");
 		}
 
@@ -67,7 +73,7 @@ public class PluginUtility {
 			if (!file.isDirectory() && file.getName().endsWith(".jar")) {
 				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
 				Class<?> clazz = loader.loadClass("com.porua.container.PoruaContainer");
-				Method mehtod = clazz.getDeclaredMethod("scanSingleApp",File.class);
+				Method mehtod = clazz.getDeclaredMethod("scanSingleApp", File.class);
 				mehtod.invoke(null, file);
 				break;
 			}
@@ -76,12 +82,14 @@ public class PluginUtility {
 	}
 
 	private static void copy(InputStream in, OutputStream out) throws IOException {
-		while (true) {
-			int c = in.read();
-			if (c == -1)
-				break;
-			out.write((char) c);
-		}
+		String result = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
+		System.out.println(result);
+		PluginUtility.pluginLogger(IStatus.INFO, result);
+	}
+
+	public static void pluginLogger(int level, String msg) {
+		Status status = new Status(level, PoruaEclipsePlugin.PLUGIN_ID, msg);
+		PoruaEclipsePlugin.getDefault().getLog().log(status);
 	}
 
 	public static File readBundleResource(String filePath) {

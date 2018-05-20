@@ -1,5 +1,6 @@
 package porua.plugin;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +51,7 @@ public class PoruaEclipsePlugin extends AbstractUIPlugin {
 
 		} catch (Exception e) {
 			// PluginTagUtility.clearMaps();
+			PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
 			MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", e.getMessage());
 		}
 
