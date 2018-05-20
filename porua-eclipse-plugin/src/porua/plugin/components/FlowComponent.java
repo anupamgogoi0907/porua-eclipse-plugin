@@ -18,7 +18,6 @@ import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.TagData;
 import porua.plugin.transfer.TagDataTransfer;
 import porua.plugin.utility.PluginConstants;
-import porua.plugin.utility.PluginUtility;
 
 public class FlowComponent extends Group {
 	private PoruaXMLEditor poruaXmlEditor;
@@ -80,12 +79,13 @@ public class FlowComponent extends Group {
 
 		@Override
 		public void handleEvent(Event event) {
+			// TODO
 			try {
-				if (PluginUtility.project != null) {
-					String root = PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
-					root = root.concat(PluginUtility.project.getFullPath().toString());
-					PluginUtility.buildProject(root);
-				}
+//				if (PluginUtility.project != null) {
+//					String root = PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
+//					root = root.concat(PluginUtility.project.getFullPath().toString());
+//					PluginUtility.buildProject(root);
+//				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
