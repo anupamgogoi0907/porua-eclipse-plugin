@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -84,15 +83,16 @@ public class AddConfigurationDialog extends Dialog {
 		newShell.setText("Configuration");
 	}
 
-	@Override
-	protected Point getInitialSize() {
-		return new Point(450, 300);
-	}
+	// @Override
+	// protected Point getInitialSize() {
+	// return new Point(450, 300);
+	// }
 
 	@Override
 	protected void okPressed() {
 		poruaXmlEditor.modifyNamespaces(tagData);
-		Element elm = poruaXmlEditor.getXmlDoc().createElement(tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
+		Element elm = poruaXmlEditor.getXmlDoc()
+				.createElement(tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
 		listTextInput.stream().forEach((t) -> {
 			elm.setAttribute(t.getData().toString(), t.getText());
 		});
