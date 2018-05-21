@@ -33,7 +33,6 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	private IEclipsePreferences pref;
 	private String poruaHome = "";
 	private String mavenHome = "";
-	private boolean isChanged;
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -88,12 +87,10 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (id.equals("txtPoruaHome")) {
 				if (!txt.getText().equals(poruaHome)) {
 					poruaHome = txt.getText();
-					isChanged = true;
 				}
 
 			} else if (id.equals("txtMavenHome")) {
 				mavenHome = txt.getText();
-				isChanged = true;
 			}
 		}
 	};
@@ -102,12 +99,10 @@ public class PoruaPreferencePage extends PreferencePage implements IWorkbenchPre
 	public boolean performOk() {
 		try {
 			if ((poruaHome != null && !poruaHome.equals("")) && (mavenHome != null && !mavenHome.equals(""))) {
-				if (isChanged) {
-					pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
-					pref.put(PluginConstants.KEY_MAVEN_HOME, mavenHome);
-					PluginUtility.configurePlugin();
-					reopenPalleteView();
-				}
+				pref.put(PluginConstants.KEY_PORUA_HOME, poruaHome);
+				pref.put(PluginConstants.KEY_MAVEN_HOME, mavenHome);
+				PluginUtility.configurePlugin();
+				reopenPalleteView();
 			} else {
 				MessageDialog.openInformation(getShell(), "Message", "Please set the required values.");
 			}

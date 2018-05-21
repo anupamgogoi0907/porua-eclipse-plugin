@@ -33,6 +33,7 @@ public class PluginUtility {
 
 	public static void configurePlugin() throws Exception {
 		PluginClassLoader.configureClassLoaders();
+		PluginTagUtility.clearMaps();
 		PluginTagUtility.loadTags();
 	}
 
