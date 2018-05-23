@@ -65,8 +65,7 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 	}
 
 	private void getTagData() {
-		Node nodeFlow = poruaXmlEditor.findFlowNodeInDom(compData.getGroupName());
-		Node nodeComp = nodeFlow.getChildNodes().item(compData.getIndex());
+		Node nodeComp = poruaXmlEditor.findNodeInFlow(compData.getGroupName(), compData.getIndex());
 		TagData tagData = PluginTagUtility.getTagDataByTagName(nodeComp.getNodeName());
 		if (tagData != null) {
 			drawTagAttributes(nodeComp, tagData);
@@ -160,7 +159,8 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 				btnAdd.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						AddConfigurationDialog dlg = new AddConfigurationDialog(parent.getShell(), poruaXmlEditor, tagData);
+						AddConfigurationDialog dlg = new AddConfigurationDialog(parent.getShell(), poruaXmlEditor,
+								tagData);
 						dlg.open();
 						loadComboAndSetValue(tag, previousConfig, comboDropDown);
 					}
@@ -210,13 +210,15 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 			btnSave.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					// Need to reload the Node. Otherwise reference is lost.
+					Node nc = poruaXmlEditor.findNodeInFlow(compData.getGroupName(), compData.getIndex());
 					listTextInput.forEach((t) -> {
-						((Element) nodeComp).setAttribute(t.getData().toString(), t.getText());
+						((Element) nc).setAttribute(t.getData().toString(), t.getText());
 					});
 
 					if (configPropName != null) {
 						if (comboSelectedConfig != null) {
-							((Element) nodeComp).setAttribute(configPropName, comboSelectedConfig);
+							((Element) nc).setAttribute(configPropName, comboSelectedConfig);
 						} else {
 							MessageDialog.openError(parent.getShell(), "Warning", "Configuration is compulsory.");
 						}

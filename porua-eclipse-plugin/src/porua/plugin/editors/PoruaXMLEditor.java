@@ -168,6 +168,15 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		return null;
 	}
 
+	public Node findNodeInFlow(String groupName, int index) {
+		Node nodeFlow = findFlowNodeInDom(groupName);
+		if (nodeFlow != null && nodeFlow.getChildNodes() != null && nodeFlow.getChildNodes().getLength() != 0) {
+			return nodeFlow.getChildNodes().item(index);
+		} else {
+			return null;
+		}
+	}
+
 	public void makeChangesToXml(String tagFlow) {
 		Element elm = xmlDoc.createElement(tagFlow);
 		elm.setAttribute("id", "flow-" + (++flowCount));
