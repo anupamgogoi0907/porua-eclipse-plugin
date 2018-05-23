@@ -20,7 +20,7 @@ import porua.plugin.pojos.TagData;
 
 @SuppressWarnings({ "deprecation" })
 public class PluginTagUtility {
-	private static int nsCount = 0;
+
 	public static Map<String, List<TagData>> mapNsTags = new HashMap<>();
 	public static Map<String, List<TagData>> mapPrefixTags = new HashMap<>();
 
@@ -131,6 +131,7 @@ public class PluginTagUtility {
 	}
 
 	public static void generatePrefixForTag() {
+		int nsCount = 0;
 		for (String ns : mapNsTags.keySet()) {
 			String prefix = "ns" + (++nsCount);
 			List<TagData> list = mapNsTags.get(ns);
