@@ -245,6 +245,21 @@ public abstract class ViewTemplate {
 		}
 	}
 
+	public Map<String, String> populateAttribueAndSelectedValue(Node node, Iterable<String> attributes) {
+		Map<String, String> mapAttributeSelectedVal = new HashMap<>();
+		for (String attributeName : attributes) {
+			if (node == null) {
+				mapAttributeSelectedVal.put(attributeName, "");
+			} else {
+				NamedNodeMap mapNodeConfigAtt = node.getAttributes();
+				Node nodeAtt = mapNodeConfigAtt.getNamedItem(attributeName);
+				mapAttributeSelectedVal.put(attributeName, nodeAtt == null ? "" : nodeAtt.getNodeValue());
+			}
+		}
+		return mapAttributeSelectedVal;
+
+	}
+
 	/**
 	 * Get the selected attribute values.
 	 * 

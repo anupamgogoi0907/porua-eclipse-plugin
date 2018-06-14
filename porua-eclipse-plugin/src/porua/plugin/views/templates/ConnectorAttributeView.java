@@ -37,35 +37,15 @@ public class ConnectorAttributeView extends ViewTemplate {
 	public void renderAttributes() {
 		Node nodeComp = poruaXmlEditor.findNodeInFlow(compData.getGroupName(), compData.getIndex());
 		TagData tagData = PluginTagUtility.getTagDataByTagName(nodeComp.getNodeName());
-		NamedNodeMap mapNodeCompAtt = nodeComp.getAttributes();
-
-		Map<String, String> mapAttributeSelectedVal = null;
-		Node nodeCompAtt = null;
 
 		// Text Attributes ## Label & Text.
 		if (tagData.getAttributes() != null && tagData.getAttributes().size() != 0) {
-			// Check for existing values.
-			mapAttributeSelectedVal = new HashMap<>();
-			for (int i = 0; i < tagData.getAttributes().size(); i++) {
-				String attribute = tagData.getAttributes().get(i);
-				nodeCompAtt = mapNodeCompAtt.getNamedItem(attribute);
-				mapAttributeSelectedVal.put(attribute, nodeCompAtt == null ? "" : nodeCompAtt.getTextContent());
-			}
-			// Render attributes.
-			makeLabelAndText(mapAttributeSelectedVal);
-
+			makeLabelAndText(populateAttribueAndSelectedValue(nodeComp, tagData.getAttributes()));
 		}
 
 		// Enum Attributes ## Label & Combo.
 		if (tagData.getAttributeValues() != null && tagData.getAttributeValues().size() != 0) {
-			// Check for existing values.
-			mapAttributeSelectedVal = new HashMap<>();
-			for (String attribute : tagData.getAttributeValues().keySet()) {
-				nodeCompAtt = mapNodeCompAtt.getNamedItem(attribute);
-				mapAttributeSelectedVal.put(attribute, nodeCompAtt == null ? "" : nodeCompAtt.getNodeValue());
-			}
-			// Render attributes.
-			makeLabelAndCombo(tagData.getAttributeValues(), mapAttributeSelectedVal);
+			makeLabelAndCombo(tagData.getAttributeValues(), populateAttribueAndSelectedValue(nodeComp, tagData.getAttributeValues().keySet()));
 		}
 
 		// Configuration Attribute ## Label & Combo & Button.
@@ -75,8 +55,9 @@ public class ConnectorAttributeView extends ViewTemplate {
 			TagData tagDataConfig = tagData.getConfig().values().iterator().next();
 
 			// Check for existing configuration.
-			mapAttributeSelectedVal = new HashMap<>();
-			nodeCompAtt = mapNodeCompAtt.getNamedItem(attributeConfigName);
+			Map<String, String> mapAttributeSelectedVal = new HashMap<>();
+			NamedNodeMap mapNodeCompAtt = nodeComp.getAttributes();
+			Node nodeCompAtt = mapNodeCompAtt.getNamedItem(attributeConfigName);
 			mapAttributeSelectedVal.put(attributeConfigName, nodeCompAtt == null ? "" : nodeCompAtt.getTextContent());
 
 			// Render attributes.

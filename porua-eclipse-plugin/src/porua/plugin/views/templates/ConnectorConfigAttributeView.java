@@ -1,10 +1,6 @@
 package porua.plugin.views.templates;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.swt.widgets.Composite;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import porua.plugin.editors.PoruaXMLEditor;
@@ -44,18 +40,5 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 		}
 	}
 
-	private Map<String, String> populateAttribueAndSelectedValue(Node node, Iterable<String> attributes) {
-		Map<String, String> mapAttributeSelectedVal = new HashMap<>();
-		for (String attributeName : attributes) {
-			if (node == null) {
-				mapAttributeSelectedVal.put(attributeName, "");
-			} else {
-				NamedNodeMap mapNodeConfigAtt = node.getAttributes();
-				Node nodeAtt = mapNodeConfigAtt.getNamedItem(attributeName);
-				mapAttributeSelectedVal.put(attributeName, nodeAtt == null ? "" : nodeAtt.getNodeValue());
-			}
-		}
-		return mapAttributeSelectedVal;
-
-	}
+	
 }
