@@ -50,8 +50,8 @@ public abstract class ViewTemplate {
 	/**
 	 * Renders multiple label and text.
 	 * 
-	 * @param attributeName
-	 * @param attributeValue
+	 * @param mapAttributeSelectedVal
+	 *            Map of attribute -> selected value
 	 */
 	protected void makeLabelAndText(Map<String, String> mapAttributeSelectedVal) {
 		for (String attributeName : mapAttributeSelectedVal.keySet()) {
@@ -97,7 +97,9 @@ public abstract class ViewTemplate {
 	 * Renders multiple label and combo.
 	 * 
 	 * @param mapAttributeValues
+	 *            Map of attribute -> enum constants
 	 * @param mapAttributeSelectedVal
+	 *            Map of attribute -> selected value
 	 */
 	protected void makeLabelAndCombo(Map<String, List<Object>> mapAttributeValues, Map<String, String> mapAttributeSelectedVal) {
 		for (String attribute : mapAttributeValues.keySet()) {
@@ -111,6 +113,7 @@ public abstract class ViewTemplate {
 	 * @param attributeName
 	 * @param attributeValues
 	 * @param mapAttributeSelectedVal
+	 *            Map of attribute -> selected value
 	 */
 	protected Group makeLabelAndCombo(String attributeName, List<Object> attributeValues, Map<String, String> mapAttributeSelectedVal) {
 		Group group = makeHorizontalGroup();
@@ -162,9 +165,12 @@ public abstract class ViewTemplate {
 	}
 
 	/**
-	 * Get cnofiguration node by configuration name.
+	 * Returns a node from a list of nodes for that tag whose attributevalue matches
+	 * with {@param attributeValue}
 	 * 
 	 * @param tag
+	 *            e.g <ns:hello msg="hello"/>
+	 * @param attributeName
 	 * @param attributeValue
 	 * @return
 	 */
@@ -185,8 +191,8 @@ public abstract class ViewTemplate {
 	}
 
 	/**
-	 * Loads nodes by tag and searches for values inside specific attribute of the
-	 * each node.
+	 * Loads nodes by tag and searches for values for specific attribute of the each
+	 * node and return the list of values.
 	 * 
 	 * @param tag
 	 *            e.g <ns:hello msg="hello world" />
@@ -209,8 +215,12 @@ public abstract class ViewTemplate {
 		return list;
 	}
 
-	
-
+	/**
+	 * Populates combo with given values.
+	 * 
+	 * @param comboDropDown
+	 * @param listValue
+	 */
 	protected void populateCombo(Combo comboDropDown, List<Object> listValue) {
 		if (listValue != null) {
 			comboDropDown.setItems(new String[] {});
@@ -220,6 +230,14 @@ public abstract class ViewTemplate {
 		}
 	}
 
+	/**
+	 * Populates combo and select value .
+	 * 
+	 * @param comboDropDown
+	 * @param listValue
+	 * @param attributeName
+	 * @param attributeValue
+	 */
 	protected void populateComboAndSelect(Combo comboDropDown, List<Object> listValue, String attributeName, String attributeValue) {
 		populateCombo(comboDropDown, listValue);
 		if (attributeName != null && attributeValue != null) {

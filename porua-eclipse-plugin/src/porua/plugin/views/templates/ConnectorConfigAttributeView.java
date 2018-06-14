@@ -26,7 +26,10 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 	@Override
 	public void renderAttributes(TagData tagData, Object... param) {
 		Map<String, String> mapAttributeSelectedVal = null;
+
+		// Check for selected configuration name.
 		if (param != null && param.length != 0 && param[0] != null) {
+			// Retrieve attribue and selected value for the config name.
 			mapAttributeSelectedVal = getSelectedAttributes(tagData.getTagNamespacePrefix() + ":" + tagData.getTag(), (String) param[0]);
 		}
 		// Text Attributes ## Label & Text.
@@ -77,5 +80,4 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 		return mapSelectedAttribute;
 	}
 
-	
 }
