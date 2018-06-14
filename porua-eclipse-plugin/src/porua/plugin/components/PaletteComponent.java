@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -38,15 +39,25 @@ public class PaletteComponent extends Button {
 
 	}
 
+	/**
+	 * Initialize a palette component.
+	 */
 	private void initComponent() {
+		RowData rowData = new RowData(100, 100);
+		this.setLayoutData(rowData);
+
+		// Set image and data
 		setImage(new Image(parent.getDisplay(), PluginTagUtility.getImageByTag(tagComponent)));
-		setSize(100, 100);
 		setData(new ComponentData(parent.getText(), index));
+
 		makeContextMenu();
 		showPropertyView();
 		pack();
 	}
 
+	/**
+	 * When clicked on a palette component Eclipse opens the property view.
+	 */
 	public void showPropertyView() {
 		this.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -65,6 +76,9 @@ public class PaletteComponent extends Button {
 		});
 	}
 
+	/**
+	 * Right click context menu on a palette component.
+	 */
 	public void makeContextMenu() {
 		Menu popupMenu = new Menu(this);
 
@@ -81,6 +95,9 @@ public class PaletteComponent extends Button {
 		this.setMenu(popupMenu);
 	}
 
+	/**
+	 * Context menu listener.
+	 */
 	private Listener menuItemListener = new Listener() {
 
 		@Override

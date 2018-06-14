@@ -8,9 +8,10 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -52,10 +53,15 @@ public class Test {
 		Composite parent = new Composite(shell, SWT.NONE);
 		parent.setLayout(new RowLayout(SWT.VERTICAL));
 
-		Group g = makeGroups(parent);
-		for(Control control:g.getChildren()) {
-			System.out.println(control.getData());
-		}
+		// Button with image.
+		Button btn=new Button(parent, SWT.PUSH);
+		RowData rd=new RowData(200, 200);
+		btn.setLayoutData(rd);
+		ImageData id=new ImageData("/Users/ac-agogoi/java-projects/my-connector/src/main/resources/dog.png");
+		Image im=new Image(display, id);
+		btn.setImage(im);
+		btn.pack();
+		
 		parent.pack();
 
 		// Open
