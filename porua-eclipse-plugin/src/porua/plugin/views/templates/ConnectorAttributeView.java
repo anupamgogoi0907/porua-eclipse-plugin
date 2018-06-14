@@ -1,6 +1,5 @@
 package porua.plugin.views.templates;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import porua.plugin.components.AddConfigurationDialog;
@@ -50,18 +48,8 @@ public class ConnectorAttributeView extends ViewTemplate {
 
 		// Configuration Attribute ## Label & Combo & Button.
 		if (tagData.getConfig() != null && tagData.getConfig().size() != 0) {
-			// Single configuration per connector.
-			String attributeConfigName = tagData.getConfig().keySet().iterator().next();
 			TagData tagDataConfig = tagData.getConfig().values().iterator().next();
-
-			// Check for existing configuration.
-			Map<String, String> mapAttributeSelectedVal = new HashMap<>();
-			NamedNodeMap mapNodeCompAtt = nodeComp.getAttributes();
-			Node nodeCompAtt = mapNodeCompAtt.getNamedItem(attributeConfigName);
-			mapAttributeSelectedVal.put(attributeConfigName, nodeCompAtt == null ? "" : nodeCompAtt.getTextContent());
-
-			// Render attributes.
-			renderConfigAttributes(tagDataConfig, mapAttributeSelectedVal);
+			renderConfigAttributes(tagDataConfig, populateAttribueAndSelectedValue(nodeComp, tagData.getConfig().keySet()));
 		}
 		// Save
 		if (tagData.getAttributes() != null || tagData.getConfig() != null) {
