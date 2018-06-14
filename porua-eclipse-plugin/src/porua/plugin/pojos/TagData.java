@@ -14,12 +14,14 @@ public class TagData implements Serializable {
 	private String tagNamespacePrefix;
 	private String tagSchemaLocation;
 	private String imageName;
-	private List<String> props;
+	private List<String> attributes;
 	private Map<String, TagData> config;
+	private Map<String, List<Object>> attributeValues;
 
 	public TagData() {
-		this.props = new ArrayList<>();
+		this.attributes = new ArrayList<>();
 		this.config = new HashMap<>();
+		this.setAttributeValues(new HashMap<>());
 	}
 
 	public TagData(String tag, String tagNamespace, String tagSchemaLocation, String imageName) {
@@ -38,12 +40,12 @@ public class TagData implements Serializable {
 		this.imageName = imageName;
 	}
 
-	public List<String> getProps() {
-		return props;
+	public List<String> getAttributes() {
+		return attributes;
 	}
 
-	public void setProps(List<String> props) {
-		this.props = props;
+	public void setAttributes(List<String> props) {
+		this.attributes = props;
 	}
 
 	public Map<String, TagData> getConfig() {
@@ -52,10 +54,6 @@ public class TagData implements Serializable {
 
 	public void setConfig(Map<String, TagData> config) {
 		this.config = config;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public String getTag() {
@@ -88,6 +86,14 @@ public class TagData implements Serializable {
 
 	public void setTagSchemaLocation(String tagSchemaLocation) {
 		this.tagSchemaLocation = tagSchemaLocation;
+	}
+
+	public Map<String, List<Object>> getAttributeValues() {
+		return attributeValues;
+	}
+
+	public void setAttributeValues(Map<String, List<Object>> propValues) {
+		this.attributeValues = propValues;
 	}
 
 }

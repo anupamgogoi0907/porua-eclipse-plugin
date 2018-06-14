@@ -1,63 +1,33 @@
 package porua.plugin.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.TagData;
+import porua.plugin.views.templates.ConnectorConfigAttributeView;
+import porua.plugin.views.templates.ViewTemplate;
 
 public class AddConfigurationDialog extends Dialog {
 	private PoruaXMLEditor poruaXmlEditor;
 	private TagData tagData;
-	private List<Text> listTextInput;
+	private String selectedConfig;
+	private ViewTemplate viewTemplate;
 
-	public AddConfigurationDialog(Shell parentShell, PoruaXMLEditor poruaXmlEditor, TagData tagData) {
+	public AddConfigurationDialog(Shell parentShell, PoruaXMLEditor poruaXmlEditor, TagData tagData, String selectedConfig) {
 		super(parentShell);
 		this.poruaXmlEditor = poruaXmlEditor;
 		this.tagData = tagData;
-		this.listTextInput = new ArrayList<>();
-	}
 
-	private Group makeHorizontalGroup(Composite parent) {
-		RowLayout layout = new RowLayout();
-		layout.type = SWT.HORIZONTAL;
-		layout.spacing = 10;
-		layout.center = true;
+		// init
+		this.selectedConfig = selectedConfig;
 
-		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(layout);
-		return group;
-	}
-
-	private void makeLabelAndText(Composite parent, String property, String text) {
-		Group group = makeHorizontalGroup(parent);
-
-		Label label = new Label(group, SWT.NONE);
-		label.setText(property);
-		label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-		label.pack();
-
-		Text textInput = new Text(group, SWT.NONE);
-		textInput.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-		textInput.setData(property);
-		textInput.setText(text);
-		textInput.pack();
-		textInput.setLayoutData(new RowData(400, 20));
-		listTextInput.add(textInput);
-
-		group.pack();
 	}
 
 	@Override
@@ -68,12 +38,9 @@ public class AddConfigurationDialog extends Dialog {
 		layout.spacing = 10;
 		parent.setLayout(layout);
 
-		if (tagData.getProps() != null && tagData.getProps().size() != 0) {
-			for (String prop : tagData.getProps()) {
-				makeLabelAndText(parent, prop, "");
-			}
-		}
-
+		// Init view template.
+		viewTemplate = new ConnectorConfigAttributeView(poruaXmlEditor, null, parent);
+		viewTemplate.renderAttributes(tagData, selectedConfig);
 		return parent;
 	}
 
@@ -90,14 +57,26 @@ public class AddConfigurationDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		poruaXmlEditor.modifyNamespaces(tagData);
-		Element elm = poruaXmlEditor.getXmlDoc()
-				.createElement(tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
-		listTextInput.stream().forEach((t) -> {
-			elm.setAttribute(t.getData().toString(), t.getText());
-		});
-		poruaXmlEditor.getXmlDoc().getFirstChild().appendChild(elm);
-		poruaXmlEditor.redrawComposite();
+		String tag = tagData.getTagNamespacePrefix() + ":" + tagData.getTag();
+		Element elm = null;
+		if (selectedConfig == null) {
+			poruaXmlEditor.modifyNamespaces(tagData);
+			elm = poruaXmlEditor.getXmlDoc().createElement(tag);
+
+		} else {
+			Node node = viewTemplate.getNode(tag, "name", selectedConfig);
+			if (node != null) {
+				elm = (Element) node;
+			}
+		}
+		// Set attribute values.
+		if (elm != null) {
+			for (String attribute : viewTemplate.getSelectedAttValues().keySet()) {
+				elm.setAttribute(attribute, viewTemplate.getSelectedAttValues().get(attribute));
+			}
+			poruaXmlEditor.getXmlDoc().getFirstChild().appendChild(elm);
+			poruaXmlEditor.redrawComposite();
+		}
 		this.close();
 	}
 

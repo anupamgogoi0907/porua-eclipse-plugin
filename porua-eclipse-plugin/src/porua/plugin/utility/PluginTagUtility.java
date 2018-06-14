@@ -6,12 +6,14 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.graphics.ImageData;
 
@@ -31,8 +33,7 @@ public class PluginTagUtility {
 			imgData = new ImageData(PluginClassLoader.getPaletteClassLoader().getResourceAsStream(pojo.getImageName()));
 			imgData.scaledTo(100, 50);
 		} catch (Exception e) {
-			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png"))
-					.getImageData();
+			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
 		}
 		return imgData;
 	}
@@ -40,12 +41,10 @@ public class PluginTagUtility {
 	public static ImageData getImageByTag(TagData tagData) {
 		ImageData imgData = null;
 		try {
-			imgData = new ImageData(
-					PluginClassLoader.getPaletteClassLoader().getResourceAsStream(tagData.getImageName()));
+			imgData = new ImageData(PluginClassLoader.getPaletteClassLoader().getResourceAsStream(tagData.getImageName()));
 			imgData.scaledTo(100, 50);
 		} catch (Exception e) {
-			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png"))
-					.getImageData();
+			imgData = PoruaEclipsePlugin.getImageDescriptor(PluginConstants.ICONS_PATH.concat("default.png")).getImageData();
 		}
 		return imgData;
 	}
@@ -66,6 +65,11 @@ public class PluginTagUtility {
 		return listAllTags;
 	}
 
+	/**
+	 * Load tags from jar files under $PORUA_HOME/plugin
+	 * 
+	 * @throws Exception
+	 */
 	public static void loadTags() throws Exception {
 		URLClassLoader loader = PluginClassLoader.getPaletteClassLoader();
 		for (URL url : loader.getURLs()) {
@@ -77,7 +81,7 @@ public class PluginTagUtility {
 					String className = en.getName().substring(0, en.getName().length() - 6);
 					className = className.replace('/', '.');
 					Class<?> clazz = loader.loadClass(className);
-					TagData tagData = makeTagData(clazz);
+					TagData tagData = makeTagDataForConnector(clazz);
 					if (tagData != null) {
 						mapNamespaceToTag(tagData);
 					}
@@ -88,7 +92,14 @@ public class PluginTagUtility {
 		generatePrefixForTag();
 	}
 
-	public static TagData makeTagData(Class<?> clazz) throws Exception {
+	/**
+	 * Make tags for the connector.
+	 * 
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static TagData makeTagDataForConnector(Class<?> clazz) throws Exception {
 		Map<String, Object> mapConnector = checkForConnector(clazz);
 		if (mapConnector != null) {
 			String connTagName = (String) mapConnector.get("tagName");
@@ -100,20 +111,70 @@ public class PluginTagUtility {
 			// Fields
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field field : fields) {
-				Map<String, Object> mapConfig = checkForConnectorConfig(field);
-				if (mapConfig == null) {
-					tagData.getProps().add(field.getName());
-				} else {
-					String configTagName = (String) mapConfig.get("tagName");
-					String configName = (String) mapConfig.get("configName");
-					TagData tagConfigData = new TagData(configTagName, connTagNamespace, connTagSchemaLocation, "");
-					for (Field f : field.getType().getDeclaredFields()) {
-						tagConfigData.getProps().add(f.getName());
+				Map<String, Object> mapConfigProp = checkForConfigProperty(field);
+
+				// Simple property.
+				if (mapConfigProp != null) {
+					Class<?> classEnum = (Class<?>) mapConfigProp.get("enumClass");
+					if (Void.class == classEnum) {
+						tagData.getAttributes().add(field.getName());
+					} else {
+						Enum<?>[] values = (Enum<?>[]) classEnum.getEnumConstants();
+						List<Object> listValue = Arrays.asList(values).stream().map(e -> e.name()).collect(Collectors.toList());
+						tagData.getAttributeValues().put(field.getName(), listValue);
 					}
-					tagData.getConfig().put(configName, tagConfigData);
+				}
+				// Separate configuration class.
+				Map<String, TagData> mapConnectorConfig = makeTagDataForConnectorConfig(field, mapConnector);
+				if (mapConnectorConfig != null) {
+					tagData.getConfig().put(mapConnectorConfig.keySet().iterator().next(), mapConnectorConfig.values().iterator().next());
 				}
 			}
 			return tagData;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Create Tag for connector configuration.
+	 * 
+	 * @param field
+	 * @param mapConnector
+	 * @return
+	 * @throws Exception
+	 */
+	public static Map<String, TagData> makeTagDataForConnectorConfig(Field field, Map<String, Object> mapConnector) throws Exception {
+		// Check if field is annonated with @ConnectorConfig.
+		Map<String, Object> mapConnectorConfig = checkForConnectorConfig(field);
+
+		if (mapConnectorConfig != null) {
+			// Connector.
+			String connTagNamespace = (String) mapConnector.get("tagNamespace");
+			String connTagSchemaLocation = (String) mapConnector.get("tagSchemaLocation");
+
+			// Connector Config.
+			String configTagName = (String) mapConnectorConfig.get("tagName");
+			String configName = (String) mapConnectorConfig.get("configName");
+
+			// Config tag.
+			TagData tagConfigData = new TagData(configTagName, connTagNamespace, connTagSchemaLocation, "");
+			for (Field f : field.getType().getDeclaredFields()) {
+				Map<String, Object> mapConfigProp = checkForConfigProperty(f);
+				if (mapConfigProp != null) {
+					Class<?> classEnum = (Class<?>) mapConfigProp.get("enumClass");
+					if (Void.class == classEnum) {
+						tagConfigData.getAttributes().add(f.getName());
+					} else {
+						Enum<?>[] values = (Enum<?>[]) classEnum.getEnumConstants();
+						List<Object> listValue = Arrays.asList(values).stream().map(e -> e.name()).collect(Collectors.toList());
+						tagConfigData.getAttributeValues().put(f.getName(), listValue);
+					}
+				}
+			}
+			Map<String, TagData> map = new HashMap<>();
+			map.put(configName, tagConfigData);
+			return map;
 		} else {
 			return null;
 		}
@@ -142,8 +203,8 @@ public class PluginTagUtility {
 	}
 
 	/**
-	 * I am not sure why I'm doing this. Inside Eclipse I could not use
-	 * clazz.getAnnotation(Connector.class)
+	 * Check for @Connector annotation.
+	 * 
 	 * 
 	 * @param clazz
 	 * @return
@@ -175,6 +236,13 @@ public class PluginTagUtility {
 		}
 	}
 
+	/**
+	 * Check for @ConnectorConfig annotation.
+	 * 
+	 * @param field
+	 * @return
+	 * @throws Exception
+	 */
 	public static Map<String, Object> checkForConnectorConfig(Field field) throws Exception {
 		Map<String, Object> map = null;
 		Annotation[] arr = field.getAnnotations();
@@ -195,6 +263,28 @@ public class PluginTagUtility {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Check for @ConfigProperty configuration.
+	 * 
+	 * @param field
+	 * @return
+	 * @throws Exception
+	 */
+	public static Map<String, Object> checkForConfigProperty(Field field) throws Exception {
+		Map<String, Object> map = null;
+		Annotation[] arr = field.getAnnotations();
+		if (arr.length != 0) {
+			Annotation annot = arr[0];
+			Class<? extends Annotation> type = annot.annotationType();
+			if (type.getName().equals("com.porua.core.tag.ConfigProperty")) {
+				map = new HashMap<>();
+				Class<?> classEnum = (Class<?>) type.getMethod("enumClass").invoke(annot);
+				map.put("enumClass", classEnum);
+			}
+		}
+		return map;
 	}
 
 	public static void clearMaps() {

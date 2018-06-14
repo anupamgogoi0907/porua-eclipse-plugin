@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -35,6 +36,7 @@ public class Test {
 
 		Label l1 = new Label(g1, SWT.NONE);
 		l1.setText("Porua Home");
+		l1.setData("hello");
 		new Text(g1, SWT.NONE);
 		g1.pack();
 		return g1;
@@ -50,9 +52,10 @@ public class Test {
 		Composite parent = new Composite(shell, SWT.NONE);
 		parent.setLayout(new RowLayout(SWT.VERTICAL));
 
-		makeGroups(parent);
-		makeGroups(parent);
-
+		Group g = makeGroups(parent);
+		for(Control control:g.getChildren()) {
+			System.out.println(control.getData());
+		}
 		parent.pack();
 
 		// Open
@@ -67,14 +70,13 @@ public class Test {
 
 	public static void makeDialog(Shell shell) {
 		TagData pojo = new TagData();
-		pojo.setProps(Arrays.asList("a", "b"));
-		AddConfigurationDialog cd = new AddConfigurationDialog(shell, null, pojo);
+		pojo.setAttributes(Arrays.asList("a", "b"));
+		AddConfigurationDialog cd = new AddConfigurationDialog(shell, null, pojo, null);
 		cd.open();
 	}
 
 	public static void makeImage(Shell shell) {
-		ImageData imgData = new ImageData(
-				"/Users/ac-agogoi/git/ant-esb/porua-eclipse-plugin/resources/icons/ant_16.png");
+		ImageData imgData = new ImageData("/Users/ac-agogoi/git/ant-esb/porua-eclipse-plugin/resources/icons/ant_16.png");
 		Image im = new Image(shell.getDisplay(), imgData);
 		Label label = new Label(shell, SWT.NONE);
 		label.setSize(100, 100);
