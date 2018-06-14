@@ -43,7 +43,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 
 		// Text Attributes ## Label & Text.
 		if (tagData.getAttributes() != null && tagData.getAttributes().size() != 0) {
-			// Check for existing configuration.
+			// Check for existing values.
 			mapAttributeSelectedVal = new HashMap<>();
 			for (int i = 0; i < tagData.getAttributes().size(); i++) {
 				String attribute = tagData.getAttributes().get(i);
@@ -57,13 +57,11 @@ public class ConnectorAttributeView extends ViewTemplate {
 
 		// Enum Attributes ## Label & Combo.
 		if (tagData.getAttributeValues() != null && tagData.getAttributeValues().size() != 0) {
-			// Check for existing configuration.
+			// Check for existing values.
 			mapAttributeSelectedVal = new HashMap<>();
 			for (String attribute : tagData.getAttributeValues().keySet()) {
 				nodeCompAtt = mapNodeCompAtt.getNamedItem(attribute);
-				if (nodeCompAtt != null) {
-					mapAttributeSelectedVal.put(attribute, nodeCompAtt.getNodeValue());
-				}
+				mapAttributeSelectedVal.put(attribute, nodeCompAtt == null ? "" : nodeCompAtt.getNodeValue());
 			}
 			// Render attributes.
 			makeLabelAndCombo(tagData.getAttributeValues(), mapAttributeSelectedVal);
@@ -119,9 +117,10 @@ public class ConnectorAttributeView extends ViewTemplate {
 	private void renderConfigAttributes(TagData tagDataConfig, Map<String, String> mapAttributeSelectedVal) {
 		String tagConfig = tagDataConfig.getTagNamespacePrefix() + ":" + tagDataConfig.getTag();
 
+		// Possible values for the attribute.
+		List<Object> listValues = loadValuesByTagAndAttribute(tagConfig, "name");
+
 		for (String attributeName : mapAttributeSelectedVal.keySet()) {
-			// Possible values for the attribute.
-			List<Object> listValues = loadValuesByTagAndAttribute(tagConfig, "name");
 
 			// Label and Combo.
 			Group group = makeLabelAndCombo(attributeName, listValues, mapAttributeSelectedVal);
@@ -136,7 +135,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 					dlg.open();
 
 					// Reload the combo.
-					populateCombo(tagConfig, "name", mapAttributeSelectedVal.get(attributeName), comboDropDown);
+					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, "name"), attributeName, mapAttributeSelectedVal.get(attributeName));
 
 				}
 			});
@@ -155,7 +154,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 					dlg.open();
 
 					// Reload the combo.
-					populateCombo(tagConfig, "name", mapAttributeSelectedVal.get(attributeName), comboDropDown);
+					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, "name"), attributeName, mapAttributeSelectedVal.get(attributeName));
 				}
 			});
 		}

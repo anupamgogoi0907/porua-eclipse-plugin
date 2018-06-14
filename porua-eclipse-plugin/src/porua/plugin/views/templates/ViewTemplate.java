@@ -124,11 +124,7 @@ public abstract class ViewTemplate {
 		// Combo.
 		Combo comboDropDown = new Combo(group, SWT.DROP_DOWN | SWT.BORDER);
 		comboDropDown.setData(attributeName);
-		if (attributeValues != null) {
-			attributeValues.stream().forEach(v -> {
-				comboDropDown.add(v.toString());
-			});
-		}
+		populateCombo(comboDropDown, attributeValues);
 		comboDropDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -158,7 +154,6 @@ public abstract class ViewTemplate {
 			for (String item : comboDropDown.getItems()) {
 				if (attributeValue.equals(item)) {
 					comboDropDown.select(iIndex);
-					// mapAttributeSelectedValue.put(attributeName, item);
 					break;
 				}
 				iIndex++;
@@ -214,19 +209,20 @@ public abstract class ViewTemplate {
 		return list;
 	}
 
-	/**
-	 * Populate combo with values retrieved for the attribute values of the tag.
-	 * 
-	 * @param tag
-	 * @param attributeName
-	 * @param comboDropDown
-	 */
-	protected void populateCombo(String tag, String attributeName, String attributeValue, Combo comboDropDown) {
-		List<Object> listValue = loadValuesByTagAndAttribute(tag, attributeName);
+	
+
+	protected void populateCombo(Combo comboDropDown, List<Object> listValue) {
 		if (listValue != null) {
+			comboDropDown.setItems(new String[] {});
 			listValue.stream().forEach(v -> {
 				comboDropDown.add(v.toString());
 			});
+		}
+	}
+
+	protected void populateComboAndSelect(Combo comboDropDown, List<Object> listValue, String attributeName, String attributeValue) {
+		populateCombo(comboDropDown, listValue);
+		if (attributeName != null && attributeValue != null) {
 			selectComboValue(comboDropDown, attributeName, attributeValue);
 		}
 	}
