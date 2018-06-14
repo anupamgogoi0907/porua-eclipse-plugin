@@ -151,6 +151,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 			btnEdit.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
+					String selectedConfigName = getSelectedAttValues() == null ? "" : getSelectedAttValues().get(attributeName) == null ? "" : getSelectedAttValues().get(attributeName);
 					AddConfigurationDialog dlg = new AddConfigurationDialog(parent.getShell(), poruaXmlEditor, tagDataConfig, selectedConfigName);
 					dlg.open();
 
