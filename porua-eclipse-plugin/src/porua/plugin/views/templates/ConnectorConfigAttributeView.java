@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
 import porua.plugin.pojos.TagData;
+import porua.plugin.utility.PluginConstants;
 
 public class ConnectorConfigAttributeView extends ViewTemplate {
 
@@ -66,7 +67,7 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 		// Look for the selected config-name if any.
 		if (nl != null && nl.getLength() != 0) {
 			for (int iNode = 0; iNode < nl.getLength(); iNode++) {
-				Node nodeConfigSelected = getNode(tag, "name", attributeConfigName);
+				Node nodeConfigSelected = getNode(tag, PluginConstants.ATTRIBUTE_CONNECTOR_CONFIG, attributeConfigName);
 
 				if (nodeConfigSelected != null && nodeConfigSelected.getAttributes() != null) {
 					mapSelectedAttribute = new HashMap<>();

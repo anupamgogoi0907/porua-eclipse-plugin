@@ -19,6 +19,7 @@ import porua.plugin.components.AddConfigurationDialog;
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
 import porua.plugin.pojos.TagData;
+import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginTagUtility;
 
 public class ConnectorAttributeView extends ViewTemplate {
@@ -118,7 +119,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 		String tagConfig = tagDataConfig.getTagNamespacePrefix() + ":" + tagDataConfig.getTag();
 
 		// Possible values for the attribute.
-		List<Object> listValues = loadValuesByTagAndAttribute(tagConfig, "name");
+		List<Object> listValues = loadValuesByTagAndAttribute(tagConfig, PluginConstants.ATTRIBUTE_CONNECTOR_CONFIG);
 
 		for (String attributeName : mapAttributeSelectedVal.keySet()) {
 
@@ -135,7 +136,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 					dlg.open();
 
 					// Reload the combo.
-					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, "name"), attributeName, mapAttributeSelectedVal.get(attributeName));
+					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, PluginConstants.ATTRIBUTE_CONNECTOR_CONFIG), attributeName, mapAttributeSelectedVal.get(attributeName));
 
 				}
 			});
@@ -154,7 +155,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 					dlg.open();
 
 					// Reload the combo.
-					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, "name"), attributeName, mapAttributeSelectedVal.get(attributeName));
+					populateComboAndSelect(comboDropDown, loadValuesByTagAndAttribute(tagConfig, PluginConstants.ATTRIBUTE_CONNECTOR_CONFIG), attributeName, mapAttributeSelectedVal.get(attributeName));
 				}
 			});
 		}
