@@ -104,22 +104,35 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		scrollComposite.setContent(composite);
 	}
 
+	/**
+	 * Render xml tags to visual component.
+	 * 
+	 * @param editorData
+	 */
 	public void xmlToVisualComponent(String editorData) {
 		if (editorData != null && !editorData.equals("")) {
 			xmlDoc = PluginDomUtility.xmlToDom(editorData);
+
+			// List flows or subflows.
 			NodeList listFlow = xmlDoc.getElementsByTagName(findFlowTag());
 			for (int i = 0; i < listFlow.getLength(); i++) {
-				// Flow
+				// Flow/Subflow
 				Node nodeFlow = listFlow.item(i);
-				// Flow Elements.
+
+				// Process Flow/Subflow and its children.
 				if (nodeFlow.getNodeType() == Node.ELEMENT_NODE) {
 					NamedNodeMap mapAtt = nodeFlow.getAttributes();
 					Node nodeAtt = mapAtt.getNamedItem("id");
 					if (nodeAtt != null) {
+						// Add flow/subflow to canvas.
 						Group group = addFlowGroupToComposite(nodeAtt.getTextContent());
+
+						// Extract childern (processors) of the flow/subflow.
 						NodeList listFlowElm = nodeFlow.getChildNodes();
 						for (int j = 0; j < listFlowElm.getLength(); j++) {
 							Node nodeFlowElm = listFlowElm.item(j);
+
+							// Add children/processors to the flow/subflow.
 							if (nodeFlowElm.getNodeType() == Node.ELEMENT_NODE) {
 								addPaletteComponentToGroup(group, nodeFlowElm.getNodeName(), j);
 							}
@@ -131,29 +144,53 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		}
 	}
 
+	/**
+	 * Search for flow or subflow in the xml.
+	 * 
+	 * @return
+	 */
 	public String findFlowTag() {
 		Node root = xmlDoc.getFirstChild();
 		NodeList listNode = root.getChildNodes();
 		for (int i = 0; i < listNode.getLength(); i++) {
 			Node n = listNode.item(i);
 			String name = n.getNodeName();
-			if (name.contains(PluginConstants.TAG_FLOW)) {
+			if (name.contains(PluginConstants.TAG_FLOW) || name.contains(PluginConstants.TAG_SUB_FLOW)) {
 				return name;
 			}
 		}
 		return "";
 	}
 
+	/**
+	 * Add flow or subflow to the canvas.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Group addFlowGroupToComposite(String name) {
 		Group group = new FlowComponent(composite, this, name);
 		flowCount++;
 		return group;
 	}
 
+	/**
+	 * Add a component to a flow or subflow.
+	 * 
+	 * @param parent
+	 * @param tagComponent
+	 * @param index
+	 */
 	public void addPaletteComponentToGroup(Group parent, String tagComponent, Integer index) {
 		new PaletteComponent(parent, this, tagComponent, index);
 	}
 
+	/**
+	 * Search for a flow or sublfow in the DOM.
+	 * 
+	 * @param groupName
+	 * @return
+	 */
 	public Node findFlowNodeInDom(String groupName) {
 		NodeList listFlow = xmlDoc.getElementsByTagName(findFlowTag());
 		for (int i = 0; i < listFlow.getLength(); i++) {
@@ -168,6 +205,13 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		return null;
 	}
 
+	/**
+	 * Search for a component (processor) in the flow by its index.
+	 * 
+	 * @param groupName
+	 * @param index
+	 * @return
+	 */
 	public Node findNodeInFlow(String groupName, int index) {
 		Node nodeFlow = findFlowNodeInDom(groupName);
 		if (nodeFlow != null && nodeFlow.getChildNodes() != null && nodeFlow.getChildNodes().getLength() != 0) {
@@ -177,6 +221,11 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		}
 	}
 
+	/**
+	 * Update xml every time flows/components are added.
+	 * 
+	 * @param tagFlow
+	 */
 	public void makeChangesToXml(String tagFlow) {
 		Element elm = xmlDoc.createElement(tagFlow);
 		elm.setAttribute("id", "flow-" + (++flowCount));
@@ -184,6 +233,11 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		redrawComposite();
 	}
 
+	/**
+	 * Update xml every time flows/components are added.
+	 * 
+	 * @param tagFlow
+	 */
 	public void makeChangesToXml(String targetFlowName, String tagComponent) {
 		Node nodeFlow = findFlowNodeInDom(targetFlowName);
 		Element elm = xmlDoc.createElement(tagComponent);
@@ -191,10 +245,16 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		redrawComposite();
 	}
 
+	/**
+	 * Redraw the whole canvas.
+	 */
 	public void redrawComposite() {
 		redrawComposite(PluginDomUtility.domToXml(xmlDoc));
 	}
 
+	/**
+	 * Redraw the whole canvas.
+	 */
 	public void redrawComposite(String xml) {
 		deleteCompositeControls();
 		xmlToVisualComponent(xml);
@@ -203,6 +263,11 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		composite.pack();
 	}
 
+	/**
+	 * Read editor data i.e xml.
+	 * 
+	 * @return
+	 */
 	public String readEditorData() {
 		IEditorInput input = editor.getEditorInput();
 		IDocument doc = editor.getDocumentProvider().getDocument(input);
@@ -210,18 +275,31 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 		return content;
 	}
 
+	/**
+	 * Write data to editor.
+	 * 
+	 * @param xml
+	 */
 	public void writeEditorData(String xml) {
 		IEditorInput input = editor.getEditorInput();
 		IDocument doc = editor.getDocumentProvider().getDocument(input);
 		doc.set(xml);
 	}
 
+	/**
+	 * Delete all swt components from the composite.
+	 */
 	public void deleteCompositeControls() {
 		for (Control c : composite.getChildren()) {
 			c.dispose();
 		}
 	}
 
+	/**
+	 * Modify namespace every time components are added.
+	 * 
+	 * @param tagData
+	 */
 	public void modifyNamespaces(TagData tagData) {
 		NamedNodeMap mapAtt = xmlDoc.getFirstChild().getAttributes();
 		boolean nsFound = false;
@@ -233,10 +311,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 			}
 		}
 		if (!nsFound) {
-			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(),
-					tagData.getTagNamespace());
-			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation")
-					.getTextContent();
+			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(), tagData.getTagNamespace());
+			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").getTextContent();
 			schemaLoc = schemaLoc + " " + tagData.getTagNamespace() + " " + tagData.getTagSchemaLocation();
 			xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").setTextContent(schemaLoc);
 		}
@@ -312,8 +388,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		if (newPageIndex == 0) {
-			IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.findView(PalettePropertyView.ID);
+			IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PalettePropertyView.ID);
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(part);
 		} else if (newPageIndex == 1) {
 			redrawComposite(readEditorData());
@@ -329,8 +404,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 				public void run() {
 					IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 					for (int i = 0; i < pages.length; i++) {
-						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
-								.equals(event.getResource())) {
+						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject().equals(event.getResource())) {
 							IEditorPart editorPart = pages[i].findEditor(editor.getEditorInput());
 							pages[i].closeEditor(editorPart, true);
 						}
