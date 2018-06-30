@@ -47,7 +47,7 @@ public class FlowCanvas extends Composite {
 			@Override
 			public void drop(DropTargetEvent event) {
 				TagData tagData = (TagData) event.data;
-				if (PluginConstants.TAG_FLOW.equals(tagData.getTag())) {
+				if (PluginConstants.TAG_FLOW.equals(tagData.getTag()) || PluginConstants.TAG_SUB_FLOW.equals(tagData.getTag())) {
 					poruaXMLEditor.modifyNamespaces(tagData);
 					poruaXMLEditor.makeChangesToXml(tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
 					pack();

@@ -3,6 +3,7 @@ package porua.plugin.utility;
 public interface PluginConstants {
 
 	public static final String TAG_FLOW = "porua-flow";
+	public static final String TAG_SUB_FLOW = "sub-flow";
 	public static final String ATTRIBUTE_CONNECTOR_CONFIG = "name";
 
 	public static final String ICONS_PATH = "resources/icons/";
