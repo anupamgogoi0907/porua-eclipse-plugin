@@ -45,10 +45,9 @@ public class FlowComponent extends Group {
 			@Override
 			public void drop(DropTargetEvent event) {
 				TagData tagData = (TagData) event.data;
-				if (!PluginConstants.TAG_FLOW.equals(tagData.getTag())) {
+				if (!PluginConstants.TAG_FLOW.equals(tagData.getTag()) && !PluginConstants.TAG_SUB_FLOW.equals(tagData.getTag())) {
 					poruaXmlEditor.modifyNamespaces(tagData);
-					poruaXmlEditor.makeChangesToXml(getText(),
-							tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
+					poruaXmlEditor.makeChangesToXml(getText(), tagData.getTagNamespacePrefix() + ":" + tagData.getTag());
 					parent.pack();
 				}
 			}
@@ -81,11 +80,12 @@ public class FlowComponent extends Group {
 		public void handleEvent(Event event) {
 			// TODO
 			try {
-//				if (PluginUtility.project != null) {
-//					String root = PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
-//					root = root.concat(PluginUtility.project.getFullPath().toString());
-//					PluginUtility.buildProject(root);
-//				}
+				// if (PluginUtility.project != null) {
+				// String root =
+				// PluginUtility.project.getWorkspace().getRoot().getLocation().toString();
+				// root = root.concat(PluginUtility.project.getFullPath().toString());
+				// PluginUtility.buildProject(root);
+				// }
 
 			} catch (Exception e) {
 				e.printStackTrace();
