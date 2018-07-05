@@ -6,9 +6,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -18,6 +16,7 @@ import org.w3c.dom.Node;
 
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
+import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginTagUtility;
 import porua.plugin.views.IViewData;
 import porua.plugin.views.PalettePropertyView;
@@ -25,12 +24,12 @@ import porua.plugin.views.PalettePropertyView;
 public class PaletteComponent extends Button {
 	private String tagComponent;
 	private Integer index;
-	private Group parent;
+	private FlowComponent parent;
 	private PoruaXMLEditor poruaXmlEditor;
 
-	public PaletteComponent(Composite parent, PoruaXMLEditor poruaXmlEditor, String tagComponent, Integer index) {
+	public PaletteComponent(FlowComponent parent, PoruaXMLEditor poruaXmlEditor, String tagComponent, Integer index) {
 		super(parent, SWT.NONE);
-		this.parent = (Group) parent;
+		this.parent = parent;
 		this.poruaXmlEditor = poruaXmlEditor;
 		this.tagComponent = tagComponent;
 		this.index = index;
@@ -43,12 +42,12 @@ public class PaletteComponent extends Button {
 	 * Initialize a palette component.
 	 */
 	private void initComponent() {
-		RowData rowData = new RowData(100, 100);
+		RowData rowData = new RowData(PluginConstants.PALETTE_COMPONENT_SIZE);
 		this.setLayoutData(rowData);
 
 		// Set image and data
-		setImage(new Image(parent.getDisplay(), PluginTagUtility.getImageByTag(tagComponent)));
-		setData(new ComponentData(parent.getText(), index));
+		this.setImage(new Image(parent.getDisplay(), PluginTagUtility.getImageByTag(tagComponent)));
+		this.setData(new ComponentData(parent.getText(), index));
 
 		makeContextMenu();
 		showPropertyView();
@@ -104,8 +103,8 @@ public class PaletteComponent extends Button {
 		public void handleEvent(Event event) {
 			MenuItem item = (MenuItem) event.widget;
 			ComponentData data = (ComponentData) item.getData();
-			Node nodeFlow = poruaXmlEditor.findFlowNodeInDom(data.getGroupName());
-			Node nodeComp = nodeFlow.getChildNodes().item(data.getIndex());
+			Node nodeFlow = poruaXmlEditor.findFlowNodeInDom(data.getFlowId());
+			Node nodeComp = nodeFlow.getChildNodes().item((Integer) data.getHierarchy());
 			if (item.getText().equals("Delete")) {
 				nodeFlow.removeChild(nodeComp);
 			}

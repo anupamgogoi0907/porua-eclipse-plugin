@@ -14,7 +14,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -36,10 +35,11 @@ import org.w3c.dom.NodeList;
 import porua.plugin.components.FlowCanvas;
 import porua.plugin.components.FlowComponent;
 import porua.plugin.components.PaletteComponent;
+import porua.plugin.controls.switchcontrol.SwitchComponent;
 import porua.plugin.pojos.TagData;
+import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginDomUtility;
 import porua.plugin.utility.PluginUtility;
-import porua.plugin.utility.PluginConstants;
 import porua.plugin.views.PalettePropertyView;
 
 public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
@@ -155,7 +155,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 				Node nodeAtt = mapAtt.getNamedItem("id");
 				if (nodeAtt != null) {
 					// Add flow/subflow to canvas.
-					Group group = addFlowGroupToComposite(nodeAtt.getTextContent());
+					FlowComponent group = addFlowGroupToComposite(nodeAtt.getTextContent());
 
 					// Extract childern (processors) of the flow/subflow.
 					NodeList listFlowElm = nodeFlow.getChildNodes();
@@ -164,7 +164,12 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 
 						// Add children/processors to the flow/subflow.
 						if (nodeFlowElm.getNodeType() == Node.ELEMENT_NODE) {
-							addPaletteComponentToGroup(group, nodeFlowElm.getNodeName(), j);
+							String[] arr = nodeFlowElm.getNodeName().split(":");
+							if ("switch".equals(arr[1])) {
+								addSwitchComponentToGroup(group, nodeFlowElm.getNodeName(), j);
+							} else {
+								addPaletteComponentToGroup(group, nodeFlowElm.getNodeName(), j);
+							}
 						}
 					}
 				}
@@ -199,8 +204,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	 *            Name (id) of the Flow or Subflow
 	 * @return Flow or Subflow group.
 	 */
-	private Group addFlowGroupToComposite(String name) {
-		Group group = new FlowComponent(composite, this, name);
+	private FlowComponent addFlowGroupToComposite(String name) {
+		FlowComponent group = new FlowComponent(composite, this, name);
 		flowCount++;
 		return group;
 	}
@@ -215,8 +220,22 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	 * @param index
 	 *            Index of the Palette component.
 	 */
-	private void addPaletteComponentToGroup(Group parent, String tagComponent, Integer index) {
+	private void addPaletteComponentToGroup(FlowComponent parent, String tagComponent, Integer index) {
 		new PaletteComponent(parent, this, tagComponent, index);
+	}
+
+	/**
+	 * Add a Switch to a flow or subflow.
+	 * 
+	 * @param parent
+	 *            Flow or Subflow to which the Switch component is being dropped.
+	 * @param tagComponent
+	 *            Tag of the Switch component.
+	 * @param index
+	 *            Index of the Switch component.
+	 */
+	private void addSwitchComponentToGroup(FlowComponent parent, String tagComponent, Integer index) {
+		new SwitchComponent(parent, this, tagComponent, index);
 	}
 
 	/**

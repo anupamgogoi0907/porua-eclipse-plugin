@@ -43,9 +43,24 @@ public abstract class ViewTemplate {
 		this.mapAttributeSelectedValue = new HashMap<>();
 	}
 
-	public abstract void renderAttributes();
+	/**
+	 * Override it.
+	 * 
+	 * @param nodeComp
+	 */
+	public void renderAttributes(Node nodeComp) {
 
-	public abstract void renderAttributes(TagData tagData, Object... param);
+	}
+
+	/**
+	 * Oberride it.
+	 * 
+	 * @param tagData
+	 * @param param
+	 */
+	public void renderAttributes(TagData tagData, Object... param) {
+
+	}
 
 	/**
 	 * Renders multiple label and text.
@@ -101,7 +116,8 @@ public abstract class ViewTemplate {
 	 * @param mapAttributeSelectedVal
 	 *            Map of attribute -> selected value
 	 */
-	protected void makeLabelAndCombo(Map<String, List<Object>> mapAttributeValues, Map<String, String> mapAttributeSelectedVal) {
+	protected void makeLabelAndCombo(Map<String, List<Object>> mapAttributeValues,
+			Map<String, String> mapAttributeSelectedVal) {
 		for (String attribute : mapAttributeValues.keySet()) {
 			makeLabelAndCombo(attribute, mapAttributeValues.get(attribute), mapAttributeSelectedVal);
 		}
@@ -115,7 +131,8 @@ public abstract class ViewTemplate {
 	 * @param mapAttributeSelectedVal
 	 *            Map of attribute -> selected value
 	 */
-	protected Group makeLabelAndCombo(String attributeName, List<Object> attributeValues, Map<String, String> mapAttributeSelectedVal) {
+	protected Group makeLabelAndCombo(String attributeName, List<Object> attributeValues,
+			Map<String, String> mapAttributeSelectedVal) {
 		Group group = makeHorizontalGroup();
 
 		// Label.
@@ -238,7 +255,8 @@ public abstract class ViewTemplate {
 	 * @param attributeName
 	 * @param attributeValue
 	 */
-	protected void populateComboAndSelect(Combo comboDropDown, List<Object> listValue, String attributeName, String attributeValue) {
+	protected void populateComboAndSelect(Combo comboDropDown, List<Object> listValue, String attributeName,
+			String attributeValue) {
 		populateCombo(comboDropDown, listValue);
 		if (attributeName != null && attributeValue != null) {
 			selectComboValue(comboDropDown, attributeName, attributeValue);

@@ -16,6 +16,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.graphics.ImageData;
+import org.w3c.dom.Node;
 
 import porua.plugin.PoruaEclipsePlugin;
 import porua.plugin.pojos.TagData;
@@ -144,7 +145,8 @@ public class PluginTagUtility {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, TagData> makeTagDataForConnectorConfig(Field field, Map<String, Object> mapConnector) throws Exception {
+	public static Map<String, TagData> makeTagDataForConnectorConfig(Field field, Map<String, Object> mapConnector)
+			throws Exception {
 		// Check if field is annonated with @ConnectorConfig.
 		Map<String, Object> mapConnectorConfig = checkForConnectorConfig(field);
 
@@ -290,5 +292,21 @@ public class PluginTagUtility {
 	public static void clearMaps() {
 		mapNsTags = new HashMap<>();
 		mapPrefixTags = new HashMap<>();
+	}
+
+	/**
+	 * The Case tag is not included in the plugin jars. It has to be created
+	 * manually from the Node information we have.
+	 * 
+	 * @param nodeCase
+	 * @return
+	 */
+	public static TagData makeSwitchCaseTag(Node nodeCase) {
+		TagData tagData = new TagData();
+		tagData = new TagData();
+		tagData.setTag(nodeCase.getNodeName().split(":")[1]);
+		tagData.setTagNamespacePrefix(nodeCase.getNodeName().split(":")[0]);
+		tagData.getAttributes().add(PluginConstants.ATTRIBUTE_TAG_SWITCH_CASE);
+		return tagData;
 	}
 }

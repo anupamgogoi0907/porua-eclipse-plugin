@@ -16,11 +16,6 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 	}
 
 	@Override
-	public void renderAttributes() {
-
-	}
-
-	@Override
 	public void renderAttributes(TagData tagData, Object... param) {
 		Node nodeConfig = null;
 
@@ -40,5 +35,4 @@ public class ConnectorConfigAttributeView extends ViewTemplate {
 		}
 	}
 
-	
 }

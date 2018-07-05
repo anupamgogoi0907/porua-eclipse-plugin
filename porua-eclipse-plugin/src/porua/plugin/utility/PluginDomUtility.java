@@ -2,6 +2,7 @@ package porua.plugin.utility;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public class PluginDomUtility {
 	public static Document xmlToDom(String xml) {
@@ -44,6 +46,27 @@ public class PluginDomUtility {
 		} catch (TransformerException ex) {
 			ex.printStackTrace();
 			return null;
+		}
+	}
+
+	/**
+	 * Recursively find the child node in parent node.
+	 * 
+	 * @param node
+	 *            The node to be operated.
+	 * @param size
+	 *            Exit condition.
+	 * @param index
+	 *            Index of the node in the children of the node.
+	 * @return
+	 */
+	public static Node iterate(Node node, List<Integer> hierarchy, int index) {
+		if (index < hierarchy.size()) {
+			Node n = node.getChildNodes().item(hierarchy.get(index));
+			index = index + 1;
+			return iterate(n, hierarchy, index);
+		} else {
+			return node;
 		}
 	}
 }

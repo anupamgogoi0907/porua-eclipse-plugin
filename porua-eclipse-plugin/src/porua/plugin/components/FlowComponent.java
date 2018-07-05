@@ -58,7 +58,8 @@ public class FlowComponent extends Group {
 		RowLayout hLayout = new RowLayout(SWT.HORIZONTAL);
 		hLayout.marginWidth = 100;
 		hLayout.marginHeight = 100;
-		hLayout.spacing = 100;
+		hLayout.spacing = 20;
+		hLayout.center=true;
 
 		setLayout(hLayout);
 	}

@@ -1,30 +1,35 @@
 package porua.plugin.pojos;
 
+/**
+ * 
+ * @author ac-agogoi
+ *
+ */
 public class ComponentData {
 
-	private String groupName;
-	private Integer index;
+	private String flowId;
+	private Object hierarchy;
 
-	public ComponentData(String groupName, Integer index) {
+	public ComponentData(String flowId, Object hierarchy) {
 		super();
-		this.groupName = groupName;
-		this.index = index;
+		this.flowId = flowId;
+		this.hierarchy = hierarchy;
 	}
 
-	public String getGroupName() {
-		return groupName;
+	public String getFlowId() {
+		return flowId;
 	}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
+	public void setFlowId(String flowId) {
+		this.flowId = flowId;
 	}
 
-	public Integer getIndex() {
-		return index;
+	public Object getHierarchy() {
+		return hierarchy;
 	}
 
-	public void setIndex(Integer index) {
-		this.index = index;
+	public void setHierarchy(Object hierarchy) {
+		this.hierarchy = hierarchy;
 	}
 
 }

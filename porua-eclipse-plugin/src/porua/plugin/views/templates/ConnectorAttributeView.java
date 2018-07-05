@@ -1,5 +1,6 @@
 package porua.plugin.views.templates;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,10 @@ import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
 import porua.plugin.pojos.TagData;
 import porua.plugin.utility.PluginConstants;
+import porua.plugin.utility.PluginDomUtility;
 import porua.plugin.utility.PluginTagUtility;
 
+@SuppressWarnings("unchecked")
 public class ConnectorAttributeView extends ViewTemplate {
 
 	public ConnectorAttributeView(PoruaXMLEditor poruaXmlEditor, ComponentData compData, Composite parent) {
@@ -28,13 +31,15 @@ public class ConnectorAttributeView extends ViewTemplate {
 	}
 
 	@Override
-	public void renderAttributes(TagData data, Object... param) {
-	}
+	public void renderAttributes(Node nodeComp) {
+		TagData tagData = null;
 
-	@Override
-	public void renderAttributes() {
-		Node nodeComp = poruaXmlEditor.findNodeInFlow(compData.getGroupName(), compData.getIndex());
-		TagData tagData = PluginTagUtility.getTagDataByTagName(nodeComp.getNodeName());
+		// Check for SwithCase.
+		if (PluginConstants.TAG_SWITCH_CASE.equals(nodeComp.getNodeName().split(":")[1])) {
+			tagData = PluginTagUtility.makeSwitchCaseTag(nodeComp);
+		} else {
+			tagData = PluginTagUtility.getTagDataByTagName(nodeComp.getNodeName());
+		}
 
 		// Text Attributes ## Label & Text.
 		if (tagData.getAttributes() != null && tagData.getAttributes().size() != 0) {
@@ -59,7 +64,14 @@ public class ConnectorAttributeView extends ViewTemplate {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					// Need to reload the Node. Otherwise reference is lost.
-					Node nc = poruaXmlEditor.findNodeInFlow(compData.getGroupName(), compData.getIndex());
+					Node nc = null;
+					if (Collection.class.isAssignableFrom(compData.getHierarchy().getClass())) {
+						List<Integer> hierarchy = ((List<Integer>) compData.getHierarchy());
+						Node p = poruaXmlEditor.findNodeInFlow(compData.getFlowId(), hierarchy.get(0));
+						nc = PluginDomUtility.iterate(p, hierarchy, 1);
+					} else {
+						nc = poruaXmlEditor.findNodeInFlow(compData.getFlowId(), (Integer) compData.getHierarchy());
+					}
 
 					// Set attribute values.
 					if (getSelectedAttValues() != null && getSelectedAttValues().size() != 0) {
@@ -74,6 +86,7 @@ public class ConnectorAttributeView extends ViewTemplate {
 		}
 		// pack all.
 		parent.pack();
+
 	}
 
 	/**
