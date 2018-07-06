@@ -10,7 +10,11 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,6 +60,7 @@ public class SwitchComponent extends Group {
 		initSwitchCases();
 		makeLayout();
 		makeDropTarget();
+		makeContextMenu();
 		parent.pack();
 	}
 
@@ -118,6 +123,40 @@ public class SwitchComponent extends Group {
 			}
 		});
 	}
+
+	/**
+	 * Make right click context menu. Only Delete option now.
+	 */
+	public void makeContextMenu() {
+		Menu popupMenu = new Menu(this);
+
+		MenuItem runItem = new MenuItem(popupMenu, SWT.CASCADE);
+		runItem.setText("Delete");
+		runItem.setData(this.getData());
+		runItem.addListener(SWT.Selection, menuItemListener);
+
+		this.setMenu(popupMenu);
+	}
+
+	/**
+	 * Context Menu listener.
+	 */
+	private Listener menuItemListener = new Listener() {
+
+		@Override
+		public void handleEvent(Event event) {
+			try {
+				Node nodeFlow = poruaXmlEditor.findFlowNodeInDom(parent.getText());
+				Node nodeSwitch = nodeFlow.getChildNodes().item(iSwitch);
+				nodeFlow.removeChild(nodeSwitch);
+				poruaXmlEditor.redrawComposite();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+	};
 
 	/**
 	 * Vertical layout for Switch.
