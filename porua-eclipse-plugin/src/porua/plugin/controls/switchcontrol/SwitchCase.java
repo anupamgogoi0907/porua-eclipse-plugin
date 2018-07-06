@@ -60,7 +60,7 @@ public class SwitchCase extends Group {
 		// hLayout.marginHeight = 50;
 		hLayout.spacing = 5;
 
-		this.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		// this.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		this.setLayout(hLayout);
 	}
 
