@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+import org.w3c.dom.Node;
 
 import porua.plugin.editors.PoruaXMLEditor;
 import porua.plugin.pojos.ComponentData;
@@ -75,7 +76,25 @@ public class SwitchCaseChild extends Button {
 
 		@Override
 		public void handleEvent(Event event) {
+			Node nodeSwitch = poruaXmlEditor.findNodeInFlow(parent.parent.parent.getText(), parent.parent.iSwitch);
+			Node nodeCase = nodeSwitch.getChildNodes().item(parent.iCase);
+			Node nodeCaseChild = nodeCase.getChildNodes().item(iCaseChild);
 
+			// Count SwitchCaseChild.
+			int countChild = 0;
+			for (int i = 0; i < nodeCase.getChildNodes().getLength(); i++) {
+				if (nodeCase.getChildNodes().item(i).getNodeType() == Node.ELEMENT_NODE) {
+					countChild++;
+				}
+			}
+			// If the SwitchCase has single child remove it from SwitchComponent.
+			if (countChild == 1) {
+				nodeSwitch.removeChild(nodeCase);
+			} else {
+				// Remove SwitchCaseChild from SwitchCase.
+				nodeCase.removeChild(nodeCaseChild);
+			}
+			poruaXmlEditor.redrawComposite();
 		}
 	};
 
