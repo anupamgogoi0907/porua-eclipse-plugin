@@ -30,7 +30,7 @@ public class FlowCanvas extends Composite {
 	}
 
 	private void makeLayout() {
-		setBackground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		setBackground(this.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		RowLayout vLayout = new RowLayout(SWT.VERTICAL);
 		vLayout.spacing = 10;
 		vLayout.marginHeight = 400;
