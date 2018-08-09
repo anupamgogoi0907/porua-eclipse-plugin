@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -65,8 +66,7 @@ public abstract class ViewTemplate {
 	/**
 	 * Renders multiple label and text.
 	 * 
-	 * @param mapAttributeSelectedVal
-	 *            Map of attribute -> selected value
+	 * @param mapAttributeSelectedVal Map of attribute -> selected value
 	 */
 	protected void makeLabelAndText(Map<String, String> mapAttributeSelectedVal) {
 		for (String attributeName : mapAttributeSelectedVal.keySet()) {
@@ -86,7 +86,7 @@ public abstract class ViewTemplate {
 		// Label.
 		Label label = new Label(group, SWT.NONE);
 		label.setText(attributeName);
-		label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		this.setLabelFont(label);
 		label.pack();
 
 		// Text.
@@ -111,10 +111,8 @@ public abstract class ViewTemplate {
 	/**
 	 * Renders multiple label and combo.
 	 * 
-	 * @param mapAttributeValues
-	 *            Map of attribute -> enum constants
-	 * @param mapAttributeSelectedVal
-	 *            Map of attribute -> selected value
+	 * @param mapAttributeValues      Map of attribute -> enum constants
+	 * @param mapAttributeSelectedVal Map of attribute -> selected value
 	 */
 	protected void makeLabelAndCombo(Map<String, List<Object>> mapAttributeValues,
 			Map<String, String> mapAttributeSelectedVal) {
@@ -128,8 +126,7 @@ public abstract class ViewTemplate {
 	 * 
 	 * @param attributeName
 	 * @param attributeValues
-	 * @param mapAttributeSelectedVal
-	 *            Map of attribute -> selected value
+	 * @param mapAttributeSelectedVal Map of attribute -> selected value
 	 */
 	protected Group makeLabelAndCombo(String attributeName, List<Object> attributeValues,
 			Map<String, String> mapAttributeSelectedVal) {
@@ -138,7 +135,7 @@ public abstract class ViewTemplate {
 		// Label.
 		Label label = new Label(group, SWT.NONE);
 		label.setText(attributeName);
-		label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		this.setLabelFont(label);
 		label.pack();
 
 		// Combo.
@@ -185,8 +182,7 @@ public abstract class ViewTemplate {
 	 * Returns a node from a list of nodes for that tag whose attributevalue matches
 	 * with {@param attributeValue}
 	 * 
-	 * @param tag
-	 *            e.g <ns:hello msg="hello"/>
+	 * @param tag            e.g <ns:hello msg="hello"/>
 	 * @param attributeName
 	 * @param attributeValue
 	 * @return
@@ -211,8 +207,7 @@ public abstract class ViewTemplate {
 	 * Loads nodes by tag and searches for values for specific attribute of the each
 	 * node and return the list of values.
 	 * 
-	 * @param tag
-	 *            e.g <ns:hello msg="hello world" />
+	 * @param tag           e.g <ns:hello msg="hello world" />
 	 * @param attributeName
 	 * @return
 	 */
@@ -322,5 +317,14 @@ public abstract class ViewTemplate {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Set Label font to Bold.
+	 */
+	protected void setLabelFont(Label label) {
+		FontDescriptor descriptor = FontDescriptor.createFrom(label.getFont());
+		descriptor = descriptor.setStyle(SWT.BOLD);
+		label.setFont(descriptor.createFont(label.getDisplay()));
 	}
 }
