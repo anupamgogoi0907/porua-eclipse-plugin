@@ -27,9 +27,10 @@ public class PluginClassLoader {
 				IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
 				String poruaHome = pref.get(PluginConstants.KEY_PORUA_HOME, null);
 
+				// PORUA_HOME contains container.jar which has references to all jar libs.
 				List<URL> rootUrls = getJarUrls(poruaHome);
-				List<URL> libUrls = getJarUrls(poruaHome.concat("/lib"));
-				rootUrls.addAll(libUrls);
+				// List<URL> libUrls = getJarUrls(poruaHome.concat("/lib"));
+				// rootUrls.addAll(libUrls);
 				poruaClassLoader = URLClassLoader.newInstance(rootUrls.toArray(new URL[rootUrls.size()]));
 			}
 		} catch (Exception e) {

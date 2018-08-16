@@ -58,7 +58,7 @@ public class SwitchCase extends Group {
 		RowLayout hLayout = new RowLayout(SWT.HORIZONTAL);
 		// hLayout.marginWidth = 50;
 		// hLayout.marginHeight = 50;
-		hLayout.spacing = 5;
+		hLayout.spacing = 30;
 
 		// this.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		this.setLayout(hLayout);

@@ -3,8 +3,12 @@ package porua.plugin.views;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.part.ViewPart;
 import org.w3c.dom.Node;
 
@@ -18,17 +22,21 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 	public static final String ID = "porua.plugin.views.PalettePropertyView";
 
 	private PoruaXMLEditor poruaXmlEditor;
-	private Composite parent;
+	private Composite view;
 	private ComponentData compData;
+	private ScrolledComposite scrollComposite;
 
 	@Override
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
+		this.scrollComposite = new ScrolledComposite(parent, SWT.VERTICAL);
+		this.view = new Group(this.scrollComposite, SWT.VERTICAL | SWT.BORDER_SOLID);
+		this.scrollComposite.setLayout(new FillLayout());
+		this.scrollComposite.setContent(this.view);
 	}
 
 	@Override
 	public void setFocus() {
-		this.parent.setFocus();
+		this.scrollComposite.setFocus();
 	}
 
 	@Override
@@ -42,10 +50,10 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 	}
 
 	private void deleteControls() {
-		for (Control c : this.parent.getChildren()) {
+		for (Control c : this.view.getChildren()) {
 			c.dispose();
 		}
-		this.parent.pack();
+		this.view.pack();
 	}
 
 	/**
@@ -75,7 +83,7 @@ public class PalettePropertyView extends ViewPart implements IViewData {
 	 * @param tagData
 	 */
 	private void drawTagAttributes(Node nodeComp) {
-		new ConnectorAttributeView(poruaXmlEditor, compData, parent).renderAttributes(nodeComp);
+		new ConnectorAttributeView(poruaXmlEditor, compData, this.view).renderAttributes(nodeComp);
 	}
 
 }

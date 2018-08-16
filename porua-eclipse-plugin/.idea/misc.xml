@@ -8,27 +8,34 @@
 			<property name="html.disable" class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JEditorPane">
-			<property name="JEditorPane.w3cLengthUnits" class="java.lang.Boolean" />
-			<property name="JEditorPane.honorDisplayProperties" class="java.lang.Boolean" />
+			<property name="JEditorPane.w3cLengthUnits"
+				class="java.lang.Boolean" />
+			<property name="JEditorPane.honorDisplayProperties"
+				class="java.lang.Boolean" />
 			<property name="charset" class="java.lang.String" />
 		</properties>
 		<properties class="javax.swing.JList">
 			<property name="List.isFileList" class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JPasswordField">
-			<property name="JPasswordField.cutCopyAllowed" class="java.lang.Boolean" />
+			<property name="JPasswordField.cutCopyAllowed"
+				class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JSlider">
-			<property name="Slider.paintThumbArrowShape" class="java.lang.Boolean" />
+			<property name="Slider.paintThumbArrowShape"
+				class="java.lang.Boolean" />
 			<property name="JSlider.isFilled" class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JTable">
 			<property name="Table.isFileList" class="java.lang.Boolean" />
-			<property name="JTable.autoStartsEdit" class="java.lang.Boolean" />
-			<property name="terminateEditOnFocusLost" class="java.lang.Boolean" />
+			<property name="JTable.autoStartsEdit"
+				class="java.lang.Boolean" />
+			<property name="terminateEditOnFocusLost"
+				class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JToolBar">
-			<property name="JToolBar.isRollover" class="java.lang.Boolean" />
+			<property name="JToolBar.isRollover"
+				class="java.lang.Boolean" />
 		</properties>
 		<properties class="javax.swing.JTree">
 			<property name="JTree.lineStyle" class="java.lang.String" />

@@ -7,8 +7,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -39,7 +37,6 @@ import porua.plugin.controls.switchcontrol.SwitchComponent;
 import porua.plugin.pojos.TagData;
 import porua.plugin.utility.PluginConstants;
 import porua.plugin.utility.PluginDomUtility;
-import porua.plugin.utility.PluginUtility;
 import porua.plugin.views.PalettePropertyView;
 
 public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
@@ -57,19 +54,6 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	public PoruaXMLEditor() {
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		setCurrentProject();
-	}
-
-	private void setCurrentProject() {
-		try {
-			ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
-			if (selection != null) {
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				PluginUtility.setProject(obj);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -113,8 +97,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Render xml tags to visual component.
 	 * 
-	 * @param editorData
-	 *            The xml data.
+	 * @param editorData The xml data.
 	 */
 	private void xmlToVisualComponent(String editorData) {
 		if (editorData != null && !editorData.equals("")) {
@@ -141,8 +124,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Renders items of the listFlow to SWT components.
 	 * 
-	 * @param listFlow
-	 *            List of Flow or Subflow.
+	 * @param listFlow List of Flow or Subflow.
 	 */
 	private void renderTags(NodeList listFlow) {
 		for (int i = 0; i < listFlow.getLength(); i++) {
@@ -200,8 +182,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Add flow or subflow to the canvas.
 	 * 
-	 * @param name
-	 *            Name (id) of the Flow or Subflow
+	 * @param name Name (id) of the Flow or Subflow
 	 * @return Flow or Subflow group.
 	 */
 	private FlowComponent addFlowGroupToComposite(String name) {
@@ -213,12 +194,10 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Add a component to a flow or subflow.
 	 * 
-	 * @param parent
-	 *            Flow or Subflow to which the Palette component is being dropped.
-	 * @param tagComponent
-	 *            Tag of the Palette component.
-	 * @param index
-	 *            Index of the Palette component.
+	 * @param parent       Flow or Subflow to which the Palette component is being
+	 *                     dropped.
+	 * @param tagComponent Tag of the Palette component.
+	 * @param index        Index of the Palette component.
 	 */
 	private void addPaletteComponentToGroup(FlowComponent parent, String tagComponent, Integer index) {
 		new PaletteComponent(parent, this, tagComponent, index);
@@ -227,12 +206,10 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Add a Switch to a flow or subflow.
 	 * 
-	 * @param parent
-	 *            Flow or Subflow to which the Switch component is being dropped.
-	 * @param tagComponent
-	 *            Tag of the Switch component.
-	 * @param index
-	 *            Index of the Switch component.
+	 * @param parent       Flow or Subflow to which the Switch component is being
+	 *                     dropped.
+	 * @param tagComponent Tag of the Switch component.
+	 * @param index        Index of the Switch component.
 	 */
 	private void addSwitchComponentToGroup(FlowComponent parent, String tagComponent, Integer index) {
 		new SwitchComponent(parent, this, tagComponent, index);
@@ -241,9 +218,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Search for a flow or sublfow in the DOM.
 	 * 
-	 * @param id
-	 *            Id of the Flow/Subflow. Id is also known as the groupName of the
-	 *            Flow or Subflow.
+	 * @param id Id of the Flow/Subflow. Id is also known as the groupName of the
+	 *           Flow or Subflow.
 	 * @return Flow or Subflow Node.
 	 */
 	public Node findFlowNodeInDom(String id) {
@@ -274,10 +250,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Search for a particular Flow/Subflow in the NodeList.
 	 * 
-	 * @param id
-	 *            Id of the Flow/Subflow
-	 * @param listFlow
-	 *            List of Flow/Subflow
+	 * @param id       Id of the Flow/Subflow
+	 * @param listFlow List of Flow/Subflow
 	 * @return
 	 */
 	private Node findFlowNodeInNodeList(String id, NodeList listFlow) {
@@ -295,10 +269,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Search for a component (processor) in the flow by its index.
 	 * 
-	 * @param groupName
-	 *            The Id of the Flow or Subflow.
-	 * @param index
-	 *            Index of the Palette component in the Flow or Subflow.
+	 * @param groupName The Id of the Flow or Subflow.
+	 * @param index     Index of the Palette component in the Flow or Subflow.
 	 * @return
 	 */
 	public Node findNodeInFlow(String groupName, int index) {
@@ -325,10 +297,9 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Update xml every time Palettes are added to Flow or Subflow are added.
 	 * 
-	 * @param targetFlowName
-	 *            Name of target Flow or Subflow to which Palettes are dropped.
-	 * @param tagComponent
-	 *            Tag of the Pallete.
+	 * @param targetFlowName Name of target Flow or Subflow to which Palettes are
+	 *                       dropped.
+	 * @param tagComponent   Tag of the Pallete.
 	 */
 	public void makeChangesToXml(String targetFlowName, String tagComponent) {
 		Node nodeFlow = findFlowNodeInDom(targetFlowName);
@@ -349,8 +320,7 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	/**
 	 * Redraw the whole canvas.
 	 * 
-	 * @param The
-	 *            updated xml. xml is mpdified somewhere else.
+	 * @param The updated xml. xml is mpdified somewhere else.
 	 */
 	public void redrawComposite(String xml) {
 		deleteCompositeControls();
@@ -408,8 +378,10 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 			}
 		}
 		if (!nsFound) {
-			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(), tagData.getTagNamespace());
-			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").getTextContent();
+			((Element) xmlDoc.getFirstChild()).setAttribute("xmlns:" + tagData.getTagNamespacePrefix(),
+					tagData.getTagNamespace());
+			String schemaLoc = xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation")
+					.getTextContent();
 			schemaLoc = schemaLoc + " " + tagData.getTagNamespace() + " " + tagData.getTagSchemaLocation();
 			xmlDoc.getFirstChild().getAttributes().getNamedItem("xsi:schemaLocation").setTextContent(schemaLoc);
 		}
@@ -492,7 +464,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		if (newPageIndex == 0) {
-			IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PalettePropertyView.ID);
+			IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.findView(PalettePropertyView.ID);
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(part);
 		} else if (newPageIndex == 1) {
 			redrawComposite(readEditorData());
@@ -509,7 +482,8 @@ public class PoruaXMLEditor extends MultiPageEditorPart implements IResourceChan
 				public void run() {
 					IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 					for (int i = 0; i < pages.length; i++) {
-						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject().equals(event.getResource())) {
+						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
+								.equals(event.getResource())) {
 							IEditorPart editorPart = pages[i].findEditor(editor.getEditorInput());
 							pages[i].closeEditor(editorPart, true);
 						}

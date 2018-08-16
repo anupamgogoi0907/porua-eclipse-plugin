@@ -12,7 +12,6 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -21,54 +20,65 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 
 import porua.plugin.PoruaEclipsePlugin;
 
-@SuppressWarnings("restriction")
 public class PluginUtility {
 
-	public static IProject project = null;
-
+	/**
+	 * Condifure plugin.
+	 * 
+	 * @throws Exception
+	 */
 	public static void configurePlugin() throws Exception {
 		PluginClassLoader.configureClassLoaders();
 		PluginTagUtility.clearMaps();
 		PluginTagUtility.loadTags();
 	}
 
-	public static void setProject(Object obj) throws Exception {
-		if (obj instanceof Project) {
-			Project p = (Project) obj;
-			project = p.getProject();
-		} else if (obj instanceof JavaProject) {
-			JavaProject jp = (JavaProject) obj;
-			project = jp.getProject();
-		} else if (obj instanceof org.eclipse.core.internal.resources.File) {
-			org.eclipse.core.internal.resources.File file = (org.eclipse.core.internal.resources.File) obj;
-			project = file.getProject();
-		}
+	/**
+	 * Build/Compile project using Maven.
+	 * 
+	 * @param root
+	 * @param action
+	 * @throws Exception
+	 */
+	public static void buildProject(String root, String action) throws Exception {
+		Thread thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
+					String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
+
+					ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", action);
+					builder.directory(new File(root));
+					Process process = builder.start();
+					copy(process.getInputStream(), System.out);
+					process.waitFor();
+					// executeApp(root);
+				} catch (Exception e) {
+					PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
+				}
+
+			}
+		});
+		thread.start();
 	}
 
-	public static void buildProject(String root) throws Exception {
-		IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
-		String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
-
-		try {
-			ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", "install");
-			builder.directory(new File(root));
-			Process process = builder.start();
-			copy(process.getInputStream(), System.out);
-			process.waitFor();
-			executeApp(root);
-		} catch (Exception e) {
-			PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
-			throw new Exception("Could not build the project.Maven error.");
-		}
-
-	}
-
-	private static void executeApp(String root) throws Exception {
+	/**
+	 * Execute app from eclipse.
+	 * 
+	 * @param root
+	 * @throws Exception
+	 */
+	public static void executeApp(String root) throws Exception {
 		File[] files = new File(root).listFiles();
 		for (File file : files) {
 			if (!file.isDirectory() && file.getName().endsWith(".jar")) {
@@ -82,17 +92,36 @@ public class PluginUtility {
 
 	}
 
+	/**
+	 * Log Maven.
+	 * 
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
 	private static void copy(InputStream in, OutputStream out) throws IOException {
 		String result = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
-		System.out.println(result);
+		pluginLogger(IStatus.INFO, result);
 		PluginUtility.pluginLogger(IStatus.INFO, result);
 	}
 
+	/**
+	 * Eclipse plugin logger.
+	 * 
+	 * @param level
+	 * @param msg
+	 */
 	public static void pluginLogger(int level, String msg) {
 		Status status = new Status(level, PoruaEclipsePlugin.PLUGIN_ID, msg);
 		PoruaEclipsePlugin.getDefault().getLog().log(status);
 	}
 
+	/**
+	 * Read bundle resource.
+	 * 
+	 * @param filePath
+	 * @return
+	 */
 	public static File readBundleResource(String filePath) {
 		File file = null;
 		try {
@@ -107,6 +136,11 @@ public class PluginUtility {
 		return file;
 	}
 
+	/**
+	 * Read property file.
+	 * 
+	 * @return
+	 */
 	public static Properties readPropertyFile() {
 		Properties props = new Properties();
 		try {
@@ -116,6 +150,24 @@ public class PluginUtility {
 			e.printStackTrace();
 		}
 		return props;
+	}
+
+	/**
+	 * Get current project.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static IProject getCurrentProject() throws Exception {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IEditorPart activeEditor = window.getActivePage().getActiveEditor();
+		if (activeEditor != null) {
+			FileEditorInput input = (FileEditorInput) activeEditor.getEditorInput();
+			IProject project = input.getFile().getProject();
+			return project;
+		} else {
+			return null;
+		}
 	}
 
 }
