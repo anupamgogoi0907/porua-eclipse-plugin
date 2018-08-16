@@ -49,27 +49,19 @@ public class PluginUtility {
 	 * @throws Exception
 	 */
 	public static void buildProject(String root, String action) throws Exception {
-		Thread thread = new Thread(new Runnable() {
+		try {
+			IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
+			String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
 
-			@Override
-			public void run() {
-				try {
-					IEclipsePreferences pref = ConfigurationScope.INSTANCE.getNode(PoruaEclipsePlugin.PLUGIN_ID);
-					String mavenHome = pref.get(PluginConstants.KEY_MAVEN_HOME, null);
-
-					ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", action);
-					builder.directory(new File(root));
-					Process process = builder.start();
-					copy(process.getInputStream(), System.out);
-					process.waitFor();
-					// executeApp(root);
-				} catch (Exception e) {
-					PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
-				}
-
-			}
-		});
-		thread.start();
+			ProcessBuilder builder = new ProcessBuilder(mavenHome.concat("/bin/mvn"), "clean", action);
+			builder.directory(new File(root));
+			Process process = builder.start();
+			copy(process.getInputStream(), System.out);
+			process.waitFor();
+			// executeApp(root);
+		} catch (Exception e) {
+			PluginUtility.pluginLogger(IStatus.ERROR, e.getMessage());
+		}
 	}
 
 	/**
