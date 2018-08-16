@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
@@ -21,7 +22,7 @@ public class JerseyUtility {
 		try {
 			IProject project = PluginUtility.getCurrentProject();
 			String apiPath = project.getLocation().toString().concat(PluginConstants.RESOURCE_FOLDER);
-			File apiFile = new File(apiPath).listFiles()[0];
+			File apiFile = findApiFile(apiPath);
 			if (apiFile != null) {
 				String srcPath = project.getLocation().toString().concat(PluginConstants.SRC_FOLDER);
 				ClassLoader loader = PluginClassLoader.getPoruaClassloader();
@@ -87,5 +88,18 @@ public class JerseyUtility {
 
 		});
 		return listPath;
+	}
+
+	/**
+	 * Find API file in src/main/resources directory.
+	 * 
+	 * @param apiPath
+	 * @return
+	 * @throws Exception
+	 */
+	public static File findApiFile(String apiPath) throws Exception {
+		File[] list = new File(apiPath).listFiles();
+		Optional<File> apiFile = Stream.of(list).filter(file -> file.getName().endsWith(".yaml")).findFirst();
+		return apiFile.get();
 	}
 }
